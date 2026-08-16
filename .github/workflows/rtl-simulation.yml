@@ -1,0 +1,197 @@
+name: Open-source RTL quality gate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FLOW_ROOT: ${{ github.workspace }}/mosaic-flow
+
+jobs:
+  rtl-checks:
+    name: Open-source RTL checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out module repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Initialize native diagnostics
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          {
+            echo "module_revision=${GITHUB_SHA}"
+            echo "runner=${RUNNER_OS}/${RUNNER_ARCH}"
+          } > ci-artifacts/native-context.txt
+
+      - name: Read pinned mosaic-flow submodule revision
+        id: flow-revision
+        run: |
+          revision="$(git ls-files --stage mosaic-flow | awk '$1 == "160000" {print $2}')"
+          if [[ ! "${revision}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "mosaic-flow must be a pinned Git submodule" >&2
+            exit 1
+          fi
+          echo "mosaic_flow_revision=${revision}" >> ci-artifacts/native-context.txt
+          echo "revision=${revision}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out pinned mosaic-flow
+        uses: actions/checkout@v7
+        with:
+          repository: ECASLab/mosaic-flow
+          ref: ${{ steps.flow-revision.outputs.revision }}
+          path: mosaic-flow
+          persist-credentials: false
+
+      - name: Verify mosaic-flow checkout
+        run: |
+          checked_out_revision="$(git -C mosaic-flow rev-parse HEAD)"
+          expected_revision="${{ steps.flow-revision.outputs.revision }}"
+          if [[ "${checked_out_revision}" != "${expected_revision}" ]]; then
+            echo "mosaic-flow checkout ${checked_out_revision} does not match gitlink ${expected_revision}" >&2
+            exit 1
+          fi
+
+      - name: Validate project flow selection
+        run: make flow-config-check
+
+      - name: Cache open-source tools
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/mosaic
+          key: mosaic-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mosaic-flow/config/tool-versions.env') }}
+
+      - name: Set up pinned open-source tools
+        run: make setup-open-source
+
+      - name: Export pinned open-source tool paths
+        run: |
+          # shellcheck disable=SC2016
+          make --no-print-directory --silent \
+            --eval='mosaic-export-tool-paths: ; @printf "%s\n" "$(VERIBLE_ROOT)/bin" "$(SLANG_ROOT)/bin" "$(OSS_CAD_SUITE_ROOT)/bin"' \
+            mosaic-export-tool-paths >> "${GITHUB_PATH}"
+
+      - name: Record tool versions
+        run: |
+          set -o pipefail
+          mkdir -p reports/tool_versions
+          {
+            verilator --version
+            yosys --version
+            sby --version
+            eqy --version
+            verible-verilog-lint --version
+            slang --version
+          } | tee reports/tool_versions/versions.log
+
+      - name: Run portable open-source RTL flow
+        run: |
+          set -o pipefail
+          make open-source 2>&1 | tee ci-artifacts/native-flow.log
+
+      - name: Upload RTL reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: open-source-rtl-reports
+          path: |
+            reports/
+            ci-artifacts/
+          if-no-files-found: error
+
+  container-checks:
+    name: Containerized open-source RTL checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out module repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Initialize container diagnostics
+        if: always()
+        run: |
+          mkdir -p ci-artifacts
+          {
+            echo "module_revision=${GITHUB_SHA}"
+            echo "runner=${RUNNER_OS}/${RUNNER_ARCH}"
+          } > ci-artifacts/container-context.txt
+
+      - name: Read pinned mosaic-flow submodule revision
+        id: flow-revision
+        run: |
+          revision="$(git ls-files --stage mosaic-flow | awk '$1 == "160000" {print $2}')"
+          if [[ ! "${revision}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "mosaic-flow must be a pinned Git submodule" >&2
+            exit 1
+          fi
+          echo "mosaic_flow_revision=${revision}" >> ci-artifacts/container-context.txt
+          echo "revision=${revision}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out pinned mosaic-flow
+        uses: actions/checkout@v7
+        with:
+          repository: ECASLab/mosaic-flow
+          ref: ${{ steps.flow-revision.outputs.revision }}
+          path: mosaic-flow
+          persist-credentials: false
+
+      - name: Verify mosaic-flow checkout
+        run: |
+          checked_out_revision="$(git -C mosaic-flow rev-parse HEAD)"
+          expected_revision="${{ steps.flow-revision.outputs.revision }}"
+          if [[ "${checked_out_revision}" != "${expected_revision}" ]]; then
+            echo "mosaic-flow checkout ${checked_out_revision} does not match gitlink ${expected_revision}" >&2
+            exit 1
+          fi
+
+      - name: Validate project flow selection
+        run: make flow-config-check
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build container image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          build-contexts: |
+            mosaic-flow=./mosaic-flow
+          build-args: |
+            MOSAIC_FLOW_REVISION=${{ steps.flow-revision.outputs.revision }}
+          cache-from: type=gha,scope=mosaic-module-ci
+          cache-to: type=gha,mode=max,scope=mosaic-module-ci
+          load: true
+          platforms: linux/amd64
+          push: false
+          tags: mosaic-module-ci:${{ github.sha }}
+
+      - name: Run portable flow in container
+        run: |
+          set -o pipefail
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            "mosaic-module-ci:${GITHUB_SHA}" clean open-source \
+            2>&1 | tee ci-artifacts/container-flow.log
+
+      - name: Upload container RTL reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: container-open-source-rtl-reports
+          path: |
+            reports/
+            ci-artifacts/
+          if-no-files-found: error
