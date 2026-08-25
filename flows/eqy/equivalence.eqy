@@ -1,11 +1,15 @@
+# Compare source RTL with the netlist produced by the required Yosys flow.
 [gold]
-read_verilog -sv rtl/mosaic_module.sv
-prep -top mosaic_module
+read_verilog -sv rtl/mosaic_dff.sv
+prep -top mosaic_dff
 
 [gate]
-read_verilog work/yosys_synthesis/mosaic_module_netlist.v
-prep -top mosaic_module
+# Outputs are isolated by module so parallel jobs cannot consume another design.
+read_verilog work/dff/yosys_synthesis/mosaic_dff_netlist.v
+prep -top mosaic_dff
 
 [strategy sat]
+# The DFF state transition is one cycle; depth eight covers reset and several
+# capture or hold transitions while remaining inexpensive.
 use sat
 depth 8

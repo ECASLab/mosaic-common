@@ -27,9 +27,9 @@ ENV FLOW_ROOT=/opt/mosaic-flow \
     MOSAIC_TOOLS_ROOT=/opt/mosaic-tools
 
 ARG MOSAIC_FLOW_REVISION=unknown
-LABEL org.opencontainers.image.description="Open-source RTL verification environment for MOSAIC modules" \
-      org.opencontainers.image.source="https://github.com/ECASLab/mosaic-module-template" \
-      org.opencontainers.image.title="MOSAIC module CI" \
+LABEL org.opencontainers.image.description="Open-source RTL verification environment for MOSAIC common modules" \
+      org.opencontainers.image.source="https://github.com/ECASLab/mosaic-common" \
+      org.opencontainers.image.title="MOSAIC common-module CI" \
       org.opencontainers.image.version="${MOSAIC_FLOW_REVISION}"
 
 WORKDIR /workspace

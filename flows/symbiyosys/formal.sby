@@ -1,14 +1,18 @@
 [options]
+# Eight steps cover reset, capture, hold, and transition cover goals for all four
+# structural parameter combinations instantiated by the formal harness.
 mode prove
 depth 8
 
 [engines]
+# Bitwuzla is provided by the pinned OSS CAD Suite.
 smtbmc bitwuzla
 
 [script]
-read -formal -sv mosaic_module.sv mosaic_module_formal.sv
-prep -top mosaic_module_formal
+# The harness instantiates the complete reset-style and enable-style matrix.
+read -formal -sv mosaic_dff.sv mosaic_dff_formal.sv
+prep -top mosaic_dff_formal
 
 [files]
-rtl/mosaic_module.sv
-verif/formal/mosaic_module_formal.sv
+rtl/mosaic_dff.sv
+verif/formal/mosaic_dff_formal.sv

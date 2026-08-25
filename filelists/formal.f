@@ -1,3 +1,3 @@
 +incdir+rtl
-rtl/mosaic_module.sv
-verif/formal/mosaic_module_formal.sv
+rtl/mosaic_dff.sv
+verif/formal/mosaic_dff_formal.sv
