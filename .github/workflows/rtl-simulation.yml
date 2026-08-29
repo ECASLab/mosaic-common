@@ -118,6 +118,21 @@ jobs:
           set -o pipefail
           make MODULE="${{ matrix.name }}" open-source 2>&1 | tee ci-artifacts/native-flow.log
 
+      - name: Validate timing constraints
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" constraint-check 2>&1 | tee ci-artifacts/native-constraint-check.log
+
+      - name: Collect assertion coverage
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" assertion-coverage 2>&1 | tee ci-artifacts/native-assertion-coverage.log
+
+      - name: Run fault-injection qualification
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" fault-injection 2>&1 | tee ci-artifacts/native-fault-injection.log
+
       - name: Upload RTL reports
         if: always()
         uses: actions/upload-artifact@v7
@@ -208,7 +223,7 @@ jobs:
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" clean open-source \
+            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" clean open-source constraint-check assertion-coverage fault-injection \
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Upload container RTL reports

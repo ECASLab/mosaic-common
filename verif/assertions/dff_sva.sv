@@ -2,7 +2,7 @@
 
 // Interface-level safety and reachability properties shared by simulation and
 // assertion-capable verification flows.
-module mosaic_dff_sva #(
+module dff_sva #(
     parameter int unsigned WIDTH = 1,
     parameter logic [WIDTH-1:0] RESET_VALUE = '0,
     parameter bit ASYNC_RESET = 1'b0,
@@ -38,14 +38,30 @@ module mosaic_dff_sva #(
   reset_wins_at_clock :
   assert property (!i_rstb |=> o_q == RESET_VALUE);
 
-  // Reachability covers ensure capture, hold, and asynchronous reset scenarios
-  // are exercised when their corresponding structures exist.
-  capture_covered :
-  cover property (i_rstb && (!HAS_ENABLE || i_enable));
+  // The asynchronous structure must update independently of a capture edge.
+  if (ASYNC_RESET) begin : gen_async_reset_assertion
+    always @(negedge i_rstb) begin
+      #1step;
+      async_reset_updates_immediately : assert (o_q == RESET_VALUE);
+    end
+  end
+
+  // Reachability covers distinguish every functional antecedent used above.
+  reset_covered :
+  cover property (!i_rstb);
+
+  reset_priority_covered :
+  cover property (!i_rstb && i_enable && (i_d != RESET_VALUE));
 
   if (HAS_ENABLE) begin : gen_hold_cover
+    enabled_capture_covered :
+    cover property (i_rstb && i_enable);
+
     hold_covered :
     cover property (i_rstb && !i_enable);
+  end else begin : gen_always_capture_cover
+    always_capture_covered :
+    cover property (i_rstb);
   end
 
   if (ASYNC_RESET) begin : gen_async_reset_cover

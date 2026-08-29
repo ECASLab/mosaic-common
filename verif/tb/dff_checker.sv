@@ -1,5 +1,5 @@
 // Self-checking stimulus and reference model for one DFF parameter profile.
-module mosaic_dff_checker #(
+module dff_checker #(
     parameter int unsigned WIDTH = 1,
     parameter logic [WIDTH-1:0] RESET_VALUE = '0,
     parameter bit ASYNC_RESET = 1'b0,
@@ -19,7 +19,7 @@ module mosaic_dff_checker #(
   logic [WIDTH-1:0] o_q;
   logic [WIDTH-1:0] expected_q;
 
-  mosaic_dff #(
+  dff #(
       .WIDTH      (WIDTH),
       .RESET_VALUE(RESET_VALUE),
       .ASYNC_RESET(ASYNC_RESET),

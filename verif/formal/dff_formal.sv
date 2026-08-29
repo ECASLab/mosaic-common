@@ -1,12 +1,12 @@
 // Prove all combinations of reset style and enable support against the same
 // unconstrained controls and data.
-module mosaic_dff_formal;
+module dff_formal;
   localparam int unsigned WIDTH = 4;
   localparam logic [WIDTH-1:0] RESET_VALUE = 4'hA;
 
   // The formal engine advances the global clock while anyseq inputs remain
   // symbolic on every proof step.
-  (* gclk *) logic i_clk;
+  (* gclk   *) logic i_clk;
   (* anyseq *) logic i_rstb;
   (* anyseq *) logic i_enable;
   (* anyseq *) logic [WIDTH-1:0] i_d;
@@ -18,7 +18,7 @@ module mosaic_dff_formal;
   logic past_valid = 1'b0;
 
   // Instantiate the complete structural parameter space.
-  mosaic_dff #(
+  dff #(
       .WIDTH(WIDTH),
       .RESET_VALUE(RESET_VALUE),
       .ASYNC_RESET(1'b0),
@@ -31,7 +31,7 @@ module mosaic_dff_formal;
       .o_q(q_sync_enable)
   );
 
-  mosaic_dff #(
+  dff #(
       .WIDTH(WIDTH),
       .RESET_VALUE(RESET_VALUE),
       .ASYNC_RESET(1'b1),
@@ -44,7 +44,7 @@ module mosaic_dff_formal;
       .o_q(q_async_enable)
   );
 
-  mosaic_dff #(
+  dff #(
       .WIDTH(WIDTH),
       .RESET_VALUE(RESET_VALUE),
       .ASYNC_RESET(1'b0),
@@ -57,7 +57,7 @@ module mosaic_dff_formal;
       .o_q(q_sync_no_enable)
   );
 
-  mosaic_dff #(
+  dff #(
       .WIDTH(WIDTH),
       .RESET_VALUE(RESET_VALUE),
       .ASYNC_RESET(1'b1),

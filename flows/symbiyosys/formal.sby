@@ -10,9 +10,9 @@ smtbmc bitwuzla
 
 [script]
 # The harness instantiates the complete reset-style and enable-style matrix.
-read -formal -sv mosaic_dff.sv mosaic_dff_formal.sv
-prep -top mosaic_dff_formal
+read -formal -sv dff.sv dff_formal.sv
+prep -top dff_formal
 
 [files]
-rtl/mosaic_dff.sv
-verif/formal/mosaic_dff_formal.sv
+rtl/dff.sv
+verif/formal/dff_formal.sv

@@ -2,7 +2,7 @@
 
 // Parameterized DFF bank with reset priority and optional clock-enable behavior.
 // Reset style and enable support are selected statically during elaboration.
-module mosaic_dff #(
+module dff #(
     parameter int unsigned WIDTH = 1,
     parameter logic [WIDTH-1:0] RESET_VALUE = '0,
     parameter bit ASYNC_RESET = 1'b0,

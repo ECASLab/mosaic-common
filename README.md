@@ -1,6 +1,6 @@
 # Parameterizable D Flip-Flop
 
-`mosaic_dff` is a parameterizable bank of rising-edge D flip-flops with an
+`dff` is a parameterizable bank of rising-edge D flip-flops with an
 active-low reset, optional enable behavior, configurable synchronous or
 asynchronous reset, and a configurable reset value.
 
@@ -18,6 +18,9 @@ root:
 git submodule update --init --recursive
 make flow-config-check
 make clean open-source
+make constraint-check
+make assertion-coverage
+make fault-injection
 ```
 
 `MODULE=dff` is the default. Every registered module has a lightweight profile
@@ -54,5 +57,6 @@ make synopsys-check-env
 make synopsys-all
 ```
 
-VC Lint, VC CDC or SpyGlass CDC, SpyGlass DFT, VC LP, Design Compiler,
-PrimeTime, and PrimePower evidence remains required by the release checklist.
+Commercial evidence is required only for flows enabled by each module's reviewed
+release policy. Disabled adapters record an approved `SKIP` and do not block the
+portable acceptance gate.

@@ -12,6 +12,7 @@ RUN apt-get update \
         git \
         make \
         python3 \
+        tcl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=mosaic-flow /VERSION /opt/mosaic-flow/VERSION

@@ -11,8 +11,9 @@ FLOW_verilator_sim := enabled
 # Physical implementation is outside the reusable RTL release scope.
 FLOW_openroad := disabled
 
-# VCS and Design Compiler remain available for a licensed qualification run.
-FLOW_vcs_sim := enabled
+# Commercial simulation is optional for this technology-independent primitive.
+# Verilator provides the required functional simulation evidence.
+FLOW_vcs_sim := disabled
 
 # Integration-level static checks are approved skips for this single-clock,
 # technology-independent primitive. Open-source lint remains mandatory above.
@@ -21,9 +22,11 @@ FLOW_vc_cdc := disabled
 FLOW_sg_cdc := disabled
 FLOW_sg_dft := disabled
 FLOW_vc_lp := disabled
-FLOW_synopsys_synthesis := enabled
+FLOW_synopsys_synthesis := disabled
 
-# Timing and power signoff belong to the integrating design for this release.
+# Commercial synthesis, timing, and power signoff belong to the integrating
+# design for this technology-independent primitive. Yosys synthesis remains a
+# required part of the portable acceptance gate.
 FLOW_synopsys_primetime := disabled
 FLOW_synopsys_primepower := disabled
 

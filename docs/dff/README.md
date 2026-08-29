@@ -3,7 +3,7 @@
 [Return to the repository README](../../README.md).
 
 This directory contains the design-owned contract and evidence policy for
-`mosaic_dff`.
+`dff`.
 
 ## Documents
 

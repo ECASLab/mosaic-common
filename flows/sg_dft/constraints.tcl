@@ -6,4 +6,4 @@
 #
 # Scan insertion is external to this functional primitive. The flow must verify
 # that i_enable does not block scan replacement and that i_rstb is controllable in
-# test mode. No internal clock or direct scan port is permitted in mosaic_dff.
+# test mode. No internal clock or direct scan port is permitted in dff.

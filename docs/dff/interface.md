@@ -4,7 +4,7 @@
 
 ## Overview
 
-`mosaic_dff` stores `WIDTH` state bits. Reset has priority over capture. With
+`dff` stores `WIDTH` state bits. Reset has priority over capture. With
 `HAS_ENABLE = 1`, the bank captures `i_d` only when `i_enable` is asserted. With
 `HAS_ENABLE = 0`, it captures on every rising edge and ignores `i_enable`.
 
@@ -51,6 +51,12 @@ With `ASYNC_RESET = 0`, reset is sampled only at a rising `i_clk` edge. With
 must satisfy recovery and removal requirements.
 
 This module is neither a reset synchronizer nor a CDC synchronizer.
+
+The default synthesis flow elaborates `ASYNC_RESET = 0` and uses
+`flows/synthesis/timing.sdc`. Integrations that elaborate
+`ASYNC_RESET = 1` must select `flows/synthesis/timing_async.sdc`. Both profiles
+time `i_rstb` relative to `i_clk`. The asynchronous profile intentionally keeps
+recovery and removal analysis enabled for reset release.
 
 ## Timing and integration
 

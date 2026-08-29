@@ -6,5 +6,5 @@
 # clock -name i_clk -period 10 [get_ports i_clk]
 # reset -name i_rstb -value 0 [get_ports i_rstb]
 #
-# i_d and i_enable are required to be synchronous to i_clk. mosaic_dff is not a
+# i_d and i_enable are required to be synchronous to i_clk. dff is not a
 # synchronizer and must not receive a blanket synchronizer waiver.

@@ -1,6 +1,6 @@
 // Parallel regression across representative widths, reset values, reset styles,
 // and enable configurations.
-module mosaic_dff_tb;
+module dff_tb;
   timeunit 1ns; timeprecision 1ps;
 
   logic i_clk;
@@ -13,7 +13,7 @@ module mosaic_dff_tb;
     i_clk = 1'b0;
   end
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(1),
       .ASYNC_RESET(1'b0),
       .HAS_ENABLE(1'b1),
@@ -23,7 +23,7 @@ module mosaic_dff_tb;
       .o_done(done[0])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(1),
       .ASYNC_RESET(1'b1),
       .HAS_ENABLE(1'b1),
@@ -33,7 +33,7 @@ module mosaic_dff_tb;
       .o_done(done[1])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(8),
       .RESET_VALUE(8'hA5),
       .ASYNC_RESET(1'b0),
@@ -44,7 +44,7 @@ module mosaic_dff_tb;
       .o_done(done[2])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(32),
       .RESET_VALUE(32'h5A5A_A5A5),
       .ASYNC_RESET(1'b1),
@@ -55,7 +55,7 @@ module mosaic_dff_tb;
       .o_done(done[3])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(32),
       .ASYNC_RESET(1'b0),
       .HAS_ENABLE(1'b0),
@@ -65,7 +65,7 @@ module mosaic_dff_tb;
       .o_done(done[4])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(32),
       .RESET_VALUE(32'hC3C3_3C3C),
       .ASYNC_RESET(1'b1),
@@ -76,7 +76,7 @@ module mosaic_dff_tb;
       .o_done(done[5])
   );
 
-  mosaic_dff_checker #(
+  dff_checker #(
       .WIDTH(128),
       .RESET_VALUE(128'h0123_4567_89AB_CDEF_FEDC_BA98_7654_3210),
       .ASYNC_RESET(1'b0),
@@ -91,12 +91,12 @@ module mosaic_dff_tb;
   // Convert a stalled checker or clocking failure into a deterministic failure.
   initial begin
     wait (&done);
-    $display("PASS: all mosaic_dff configurations completed");
+    $display("PASS: all dff configurations completed");
     $finish;
   end
 
   initial begin
     #20us;
-    $fatal(1, "mosaic_dff regression timed out");
+    $fatal(1, "dff regression timed out");
   end
 endmodule
