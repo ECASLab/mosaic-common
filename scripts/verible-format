@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Counter RTL and verification sources use four-space indentation. Other modules
+# retain Verible's default so existing formatting remains unchanged.
+args=("$@")
+source_file="${args[${#args[@]}-1]}"
+
+if [[ "${source_file}" == *counter*.sv ]]; then
+    args=(--indentation_spaces=4 "${args[@]}")
+fi
+
+exec "${VERIBLE_FORMAT_REAL_CMD:-verible-verilog-format}" "${args[@]}"

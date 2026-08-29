@@ -2,6 +2,9 @@
   "include": [
     {
       "name": "dff"
+    },
+    {
+      "name": "counter"
     }
   ]
 }

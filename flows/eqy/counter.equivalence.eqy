@@ -1,0 +1,18 @@
+[gold]
+read_verilog -sv rtl/counter.sv
+prep -top counter
+
+[gate]
+read_verilog work/counter/yosys_synthesis/counter_netlist.v
+prep -top counter
+
+[collect counter]
+# Keep the registered state and its combinational boundary view in one
+# partition so feedback is not abstracted as an independent primary input.
+group o_*
+
+[strategy sat]
+# Bounded sequential equivalence handles the counter's uninitialized state
+# consistently while reset, load, arithmetic, and hold transitions are explored.
+use sat
+depth 12
