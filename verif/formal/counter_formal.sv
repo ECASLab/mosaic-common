@@ -72,15 +72,10 @@ module counter_formal;
     );
 
     function automatic logic [WIDTH+1:0] expected_step(
-        input logic [WIDTH-1:0] previous_count,
-        input logic previous_rstb,
-        input logic previous_clear,
-        input logic previous_load,
-        input logic previous_enable,
-        input logic previous_direction,
-        input logic [WIDTH-1:0] previous_load_value,
-        input logic saturate_mode
-    );
+        input logic [WIDTH-1:0] previous_count, input logic previous_rstb,
+        input logic previous_clear, input logic previous_load, input logic previous_enable,
+        input logic previous_direction, input logic [WIDTH-1:0] previous_load_value,
+        input logic saturate_mode);
         logic [WIDTH-1:0] next_count;
         logic next_overflow;
         logic next_underflow;
@@ -124,23 +119,51 @@ module counter_formal;
         past_valid <= 1'b1;
         if (past_valid) begin
             assert ({overflow_sync_sat, underflow_sync_sat, count_sync_sat} == expected_step(
-                $past(count_sync_sat),
-                $past(i_rstb),
-                $past(i_clear),
-                $past(i_load),
-                $past(i_enable),
-                $past(i_direction),
-                $past(i_load_value),
+                $past(
+                    count_sync_sat
+                ),
+                $past(
+                    i_rstb
+                ),
+                $past(
+                    i_clear
+                ),
+                $past(
+                    i_load
+                ),
+                $past(
+                    i_enable
+                ),
+                $past(
+                    i_direction
+                ),
+                $past(
+                    i_load_value
+                ),
                 1'b1
             ));
             assert ({overflow_sync_wrap, underflow_sync_wrap, count_sync_wrap} == expected_step(
-                $past(count_sync_wrap),
-                $past(i_rstb),
-                $past(i_clear),
-                $past(i_load),
-                $past(i_enable),
-                $past(i_direction),
-                $past(i_load_value),
+                $past(
+                    count_sync_wrap
+                ),
+                $past(
+                    i_rstb
+                ),
+                $past(
+                    i_clear
+                ),
+                $past(
+                    i_load
+                ),
+                $past(
+                    i_enable
+                ),
+                $past(
+                    i_direction
+                ),
+                $past(
+                    i_load_value
+                ),
                 1'b0
             ));
             if (!i_rstb) begin
@@ -149,23 +172,51 @@ module counter_formal;
                         {2'b00, RESET_VALUE});
             end else begin
                 assert ({overflow_async_sat, underflow_async_sat, count_async_sat} == expected_step(
-                    $past(count_async_sat),
-                    $past(i_rstb),
-                    $past(i_clear),
-                    $past(i_load),
-                    $past(i_enable),
-                    $past(i_direction),
-                    $past(i_load_value),
+                    $past(
+                        count_async_sat
+                    ),
+                    $past(
+                        i_rstb
+                    ),
+                    $past(
+                        i_clear
+                    ),
+                    $past(
+                        i_load
+                    ),
+                    $past(
+                        i_enable
+                    ),
+                    $past(
+                        i_direction
+                    ),
+                    $past(
+                        i_load_value
+                    ),
                     1'b1
                 ));
                 assert ({overflow_async_wrap, underflow_async_wrap, count_async_wrap} == expected_step(
-                    $past(count_async_wrap),
-                    $past(i_rstb),
-                    $past(i_clear),
-                    $past(i_load),
-                    $past(i_enable),
-                    $past(i_direction),
-                    $past(i_load_value),
+                    $past(
+                        count_async_wrap
+                    ),
+                    $past(
+                        i_rstb
+                    ),
+                    $past(
+                        i_clear
+                    ),
+                    $past(
+                        i_load
+                    ),
+                    $past(
+                        i_enable
+                    ),
+                    $past(
+                        i_direction
+                    ),
+                    $past(
+                        i_load_value
+                    ),
                     1'b0
                 ));
             end

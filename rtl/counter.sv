@@ -3,10 +3,10 @@
 // Parameterizable up/down counter with load, clear, boundary events, and
 // statically selected saturating or wrapping arithmetic.
 module counter #(
-    parameter int unsigned      WIDTH       = 32,
-    parameter logic [WIDTH-1:0] RESET_VALUE = '0,
-    parameter bit               ASYNC_RESET = 1'b0,
-    parameter bit               SATURATE    = 1'b1
+    parameter int unsigned             WIDTH       = 32,
+    parameter logic        [WIDTH-1:0] RESET_VALUE = '0,
+    parameter bit                      ASYNC_RESET = 1'b0,
+    parameter bit                      SATURATE    = 1'b1
 ) (
     input  logic             i_clk,
     input  logic             i_rstb,
