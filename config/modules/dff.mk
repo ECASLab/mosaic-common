@@ -17,11 +17,15 @@ export EQUIVALENCE_CONFIG := $(call resolve_flow_config,eqy,equivalence.eqy)
 export OPENROAD_CONFIG := $(call resolve_flow_config,openroad,config.mk)
 export SYNTHESIS_CONSTRAINT_FILE := $(call resolve_flow_config,synthesis,timing.sdc)
 export ASYNC_SYNTHESIS_CONSTRAINT_FILE := $(call resolve_flow_config,synthesis,timing_async.sdc)
+export OPENROAD_CONSTRAINT_FILE := $(FLOW_CONFIG_ROOT)/openroad/timing.sdc
 export CDC_CONFIG := $(call resolve_flow_config,cdc,constraints.tcl)
 export DFT_CONFIG := $(call resolve_flow_config,sg_dft,constraints.tcl)
 export UPF_CONFIG := $(call resolve_flow_config,vc_lp,power.upf)
 export CONSTRAINT_DIR := $(FLOW_CONFIG_ROOT)/synthesis
 export ASSERTION_COVERAGE_SCRIPT := $(MODULE_ROOT)/verif/tb/assertion_coverage/run_assertion_coverage.sh
+export ASSERTION_COVERPOINT_REQUIREMENTS := reset_covered=7 reset_priority_covered=7 enabled_capture_covered=5 hold_covered=5 always_capture_covered=2 async_reset_covered=3
+export ASSERTION_COVERAGE_EXCLUDED_RTL_LINES :=
+export FORMAL_COVERAGE_CONFIG :=
 export CONSTRAINT_CHECK_SCRIPT := $(MODULE_ROOT)/verif/static/run_constraint_check.sh
 export FAULT_INJECTION_SCRIPT := $(MODULE_ROOT)/verif/tb/fault_injection/run_fault_injection.sh
 export RELEASE_MANIFEST_SCRIPT := $(MODULE_ROOT)/scripts/generate-release-manifest.sh

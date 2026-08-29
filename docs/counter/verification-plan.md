@@ -27,6 +27,7 @@ The counter verification environment checks:
 | EQY | `counter` | Grouped RTL-to-Yosys-netlist equivalence |
 | Static frontends | `counter` | Style, formatting, compile, hierarchy, lint, and synthesizability checks |
 | Yosys synthesis | `counter` | Generic structure and arithmetic inference |
+| Constraint intent | Committed SDC profiles | Clock, uncertainty, interface delay, reset timing, and OpenROAD SDC checks |
 
 VCS and commercial static, synthesis, timing, and power environments are disabled
 for the current technology-independent release scope.
@@ -47,6 +48,7 @@ for the current technology-independent release scope.
 | `CTR-TERM-001` | Terminal matches count and direction | Scoreboard check every cycle | `terminal_matches_direction` and combinational proof |
 | `CTR-SYN-001` | RTL synthesizes without structural errors | Not applicable | Yosys synthesis report |
 | `CTR-EQY-001` | Generic netlist preserves RTL behavior | Not applicable | EQY grouped SAT proof |
+| `CTR-SDC-001` | Timing profiles constrain the clock and every interface without hiding reset timing | Not applicable | Static constraint-intent campaign |
 
 ## Simulation plan
 
@@ -70,9 +72,10 @@ the simulation filelist. They cover known controls, priority, arithmetic,
 boundary behavior, event exclusivity, hold, terminal indication, and immediate
 asynchronous reset assertion.
 
-Cover properties exist for clear, load, increment, decrement, hold, overflow,
-and underflow. A quantified assertion-antecedent campaign is still required to
-turn these coverpoints into release evidence.
+Cover properties exist for reset, clear, load, both priority conflicts,
+increment, decrement, hold, overflow, and underflow. The assertion-coverage
+campaign requires a positive hit for all ten coverpoints in every one of the
+eight simulation configurations.
 
 ## Formal plan
 
@@ -83,6 +86,8 @@ the complete state space and pass by induction.
 
 The intentionally undriven `(* gclk *)` formal clock is reviewed under
 `COUNTER-FORMAL-001`. Counterexamples are retained by SymbiYosys on failures.
+The assertion-coverage campaign also runs `counter.cover.sby` and requires both
+formal boundary-event cover statements to be reached within 12 steps.
 
 ## Equivalence plan
 
@@ -97,13 +102,19 @@ strategy proves the grouped sequential partition.
 | Coverage type | Required content | Current status |
 | --- | --- | --- |
 | Requirements | Every interface requirement has mapped evidence | Mapped |
-| Functional | Commands, priorities, directions, boundaries, modes, and crosses | Not quantified |
-| Assertions | Antecedent attempts and vacuity review | Not quantified |
-| Code | Executable line, branch, expression, and toggle goals | Not collected |
-| Formal | Proven properties and reachable cover goals | Proof passes, cover report pending |
+| Functional | Commands, priorities, directions, boundaries, modes, and crosses | Ten coverpoints hit in all eight configurations |
+| Assertions | Antecedent attempts and vacuity review | All required antecedents have positive hits |
+| Code | Executable line and Verilator branch/toggle records | Adjusted 100% for release RTL |
+| Formal | Proven properties and reachable cover goals | Proof passes and both covers are reached |
 
-Release targets and approved exclusions remain to be defined. Until then,
-functional and code coverage closure is open.
+`make MODULE=counter assertion-coverage` requires `62/62` executable RTL lines
+and `1072/1072` Verilator branch/toggle records after approved exclusions. The
+excluded RTL lines are the four-state-only default direction branch at line 35
+and the static `SATURATE` alternatives at lines 57, 64, 89, and 96. A two-state
+simulation cannot exercise an unknown direction, and each elaborated instance
+can select only one value of a static parameter. All nonexcluded release RTL and
+all required functional coverpoints must be hit. Verification-source coverage
+is retained for diagnosis but is not a release threshold.
 
 ## Parameter and configuration matrix
 
@@ -122,6 +133,16 @@ functional and code coverage closure is open.
 Formal uses `WIDTH=3` to exhaustively explore every state. Synthesis and
 equivalence currently qualify the default parameterization.
 
+## Constraint intent plan
+
+`make MODULE=counter constraint-check` executes the synchronous, asynchronous,
+and OpenROAD-selected SDC profiles against a Tcl command model. The campaign
+requires a 10 ns `i_clk`, 0.1 ns clock uncertainty, 0.5 ns input delay on every
+input except the clock, and 0.5 ns output delay on every output. It rejects
+duplicate definitions and any blanket false path that could hide asynchronous
+reset recovery or removal timing. The selected profile names must also follow
+the module-first file-resolution policy.
+
 ## Negative testing
 
 The release fault-injection campaign must demonstrate detection of:
@@ -135,8 +156,14 @@ The release fault-injection campaign must demonstrate detection of:
 - Reset-value corruption
 - RTL and synthesized-netlist mismatch
 
-No retained mutation campaign exists yet, so negative-testing closure remains
-open.
+`make MODULE=counter fault-injection` substitutes eight verification-only RTL
+mutants into the production simulation environment. The campaign requires the
+existing checker or assertions to detect incorrect clear and load priority,
+reversed direction encoding, incorrect saturating and wrapping boundaries,
+missing boundary events, incorrect terminal direction, and reset-value
+corruption. A ninth test requires EQY to reject a deliberately incorrect
+candidate netlist. Per-mutation logs and `PASS` status files are retained under
+`reports/counter/fault_injection/`.
 
 ## Exit criteria
 
@@ -145,10 +172,11 @@ open.
 - [x] Enabled portable flows record `PASS`.
 - [x] Disabled flows have a documented policy reason.
 - [x] Simulation regressions pass with a deterministic timeout.
-- [ ] Assertions have meaningful activation demonstrated by a coverage report.
+- [x] Assertions have meaningful activation demonstrated by a coverage report.
 - [x] Formal properties pass by induction without assumptions.
 - [x] Equivalence passes for the required synthesis configuration.
-- [ ] Coverage goals are met and exclusions are approved.
-- [ ] Negative testing detects the required mutations.
+- [x] Synchronous, asynchronous, and OpenROAD constraint intent checks pass.
+- [x] Coverage goals are met and exclusions are approved.
+- [x] Negative testing detects the required mutations.
 - [x] All current waivers are recorded in [Reviewed waivers](waivers.md).
-- [ ] The release checklist is complete.
+- [x] The release checklist is complete.

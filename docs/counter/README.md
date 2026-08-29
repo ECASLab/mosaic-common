@@ -13,5 +13,7 @@ Run its current portable gate from the repository root:
 
 ```sh
 make MODULE=counter clean open-source
+make MODULE=counter constraint-check
+make MODULE=counter assertion-coverage
 make MODULE=counter release-manifest
 ```

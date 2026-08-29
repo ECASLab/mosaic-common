@@ -135,4 +135,4 @@ power-domain sequencing belong to the integrating design.
 - [x] Define errors, illegal inputs, and recovery.
 - [x] Define disabled, test-mode, reset, and low-power behavior.
 - [x] Link each requirement to verification evidence.
-- [ ] Review this document with both module and integration owners.
+- [x] Review this document with both module and integration owners.

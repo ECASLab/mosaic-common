@@ -89,10 +89,16 @@ module counter_sva #(
         end
     end
 
+    reset_covered :
+    cover property (!i_rstb);
     clear_covered :
     cover property (i_rstb && i_clear);
+    clear_priority_covered :
+    cover property (i_rstb && i_clear && i_load && i_enable);
     load_covered :
     cover property (i_rstb && !i_clear && i_load);
+    load_priority_covered :
+    cover property (i_rstb && !i_clear && i_load && i_enable);
     increment_covered :
     cover property (i_rstb && !i_clear && !i_load && i_enable && !i_direction);
     decrement_covered :
