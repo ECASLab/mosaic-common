@@ -1,7 +1,7 @@
 # Execute the committed SDC profiles against a small command model and verify
 # their interface intent without requiring a technology library or STA license.
-if {$argc != 3} {
-  puts stderr "usage: check_constraints.tcl DEFAULT_SDC ASYNC_SDC OPENROAD_SDC"
+if {$argc != 4} {
+  puts stderr "usage: check_constraints.tcl DEFAULT_SDC ASYNC_SDC OPENROAD_SDC DESIGN_TOP"
   exit 2
 }
 
@@ -65,4 +65,4 @@ proc check_profile {profile path} {
 check_profile synchronous [lindex $argv 0]
 check_profile asynchronous [lindex $argv 1]
 check_profile openroad_synchronous [lindex $argv 2]
-puts "All DFF constraint profiles passed static intent checks"
+puts "All [lindex $argv 3] constraint profiles passed static intent checks"

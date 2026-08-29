@@ -6,6 +6,10 @@ set -euo pipefail
 : "${REPORT_DIR:?REPORT_DIR must identify the module report directory}"
 # shellcheck disable=SC2153
 : "${WORK_DIR:?WORK_DIR must identify the module work directory}"
+# shellcheck disable=SC2153
+: "${DESIGN_TOP:?DESIGN_TOP must identify the selected module}"
+# shellcheck disable=SC2153
+: "${ASSERTION_COVERPOINT_REQUIREMENTS:?ASSERTION_COVERPOINT_REQUIREMENTS must define required coverpoint hits}"
 
 report_dir="${REPORT_DIR}/assertion_coverage"
 work_dir="${WORK_DIR}/assertion_coverage"
@@ -38,14 +42,16 @@ fi
 "${coverage_cmd}" --write-info "${report_dir}/coverage.info" "${coverage_data}" \
   >"${report_dir}/coverage.log" 2>&1
 
-declare -A required_coverpoints=(
-  [reset_covered]=7
-  [reset_priority_covered]=7
-  [enabled_capture_covered]=5
-  [hold_covered]=5
-  [always_capture_covered]=2
-  [async_reset_covered]=3
-)
+declare -A required_coverpoints=()
+for requirement in ${ASSERTION_COVERPOINT_REQUIREMENTS}; do
+  coverpoint="${requirement%%=*}"
+  expected_count="${requirement#*=}"
+  if [[ -z "${coverpoint}" || ! "${expected_count}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Invalid assertion coverage requirement: ${requirement}" >&2
+    exit 2
+  fi
+  required_coverpoints["${coverpoint}"]="${expected_count}"
+done
 
 for coverpoint in "${!required_coverpoints[@]}"; do
   expected_count="${required_coverpoints[${coverpoint}]}"
@@ -62,15 +68,25 @@ done
 # Release RTL must reach every executable line and both directions of every
 # toggle represented in the LCOV BRDA records. Verification-source metrics are
 # retained for diagnosis but are not release thresholds.
-if ! awk '
-  /^SF:/ { in_rtl = ($0 == "SF:rtl/dff.sv"); next }
+# Verilator emits BRDA records for both runtime branches and toggle coverage.
+# Module profiles may exclude narrowly reviewed source lines for structurally
+# unreachable elaboration-time alternatives or four-state-only behavior.
+if ! awk -v rtl_source="rtl/${DESIGN_TOP}.sv" \
+  -v excluded_lines="${ASSERTION_COVERAGE_EXCLUDED_RTL_LINES:-}" '
+  BEGIN {
+    split(excluded_lines, line_list, " ");
+    for (line_index in line_list) excluded[line_list[line_index]] = 1;
+  }
+  /^SF:/ { in_rtl = ($0 == "SF:" rtl_source); next }
   in_rtl && /^DA:/ {
     split(substr($0, 4), fields, ",");
+    if (fields[1] in excluded) next;
     line_total++;
     if (fields[2] > 0) line_hit++;
   }
   in_rtl && /^BRDA:/ {
     split(substr($0, 6), fields, ",");
+    if (fields[1] in excluded) next;
     toggle_total++;
     if (fields[4] != "-" && fields[4] > 0) toggle_hit++;
   }
@@ -86,5 +102,15 @@ if ! awk '
   exit 1
 fi
 
+if [[ -n "${FORMAL_COVERAGE_CONFIG:-}" ]]; then
+  if ! "${SBY_CMD:-sby}" -f \
+    -d "${work_dir}/formal_cover" \
+    "${FORMAL_COVERAGE_CONFIG}" \
+    >"${report_dir}/formal-cover.log" 2>&1; then
+    cat "${report_dir}/formal-cover.log" >&2
+    exit 1
+  fi
+fi
+
 printf 'PASS\n' > "${report_dir}/status.txt"
-echo "All required DFF assertion antecedents were exercised"
+echo "All required ${DESIGN_TOP} assertion antecedents were exercised"

@@ -10,6 +10,7 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | Module | Description | Documentation |
 | --- | --- | --- |
 | `dff` | Parameterizable D flip-flop bank with configurable reset and enable behavior | [`docs/dff/`](docs/dff/) |
+| `counter` | Parameterizable saturating or wrapping up/down counter | [`docs/counter/`](docs/counter/) |
 
 The authoritative module list used by local automation and the GitHub Actions
 matrix is [`.github/modules.json`](.github/modules.json).

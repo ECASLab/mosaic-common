@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 12
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv counter.sv counter_formal.sv
+prep -top counter_formal
+
+[files]
+rtl/counter.sv
+verif/formal/counter_formal.sv
