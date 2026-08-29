@@ -23,6 +23,8 @@ export CONSTRAINT_DIR := $(FLOW_CONFIG_ROOT)/synthesis
 export ASSERTION_COVERAGE_SCRIPT := $(MODULE_ROOT)/verif/tb/assertion_coverage/run_assertion_coverage.sh
 export CONSTRAINT_CHECK_SCRIPT := $(MODULE_ROOT)/verif/static/run_constraint_check.sh
 export FAULT_INJECTION_SCRIPT := $(MODULE_ROOT)/verif/tb/fault_injection/run_fault_injection.sh
+export RELEASE_MANIFEST_SCRIPT := $(MODULE_ROOT)/scripts/generate-release-manifest.sh
+export RELEASE_EVIDENCE_GATES := constraint_check assertion_coverage fault_injection
 
 # Per-module roots prevent concurrent jobs from overwriting one another.
 export REPORT_DIR := $(MODULE_ROOT)/reports/$(MODULE)

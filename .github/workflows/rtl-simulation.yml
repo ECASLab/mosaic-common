@@ -133,6 +133,14 @@ jobs:
           set -o pipefail
           make MODULE="${{ matrix.name }}" fault-injection 2>&1 | tee ci-artifacts/native-fault-injection.log
 
+      - name: Generate release evidence manifest
+        env:
+          MODULE_REVISION: ${{ github.sha }}
+          METHODOLOGY_REVISION: ${{ steps.flow-revision.outputs.revision }}
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" release-manifest 2>&1 | tee ci-artifacts/native-release-manifest.log
+
       - name: Upload RTL reports
         if: always()
         uses: actions/upload-artifact@v7
@@ -222,8 +230,10 @@ jobs:
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
+            --env MODULE_REVISION="${GITHUB_SHA}" \
+            --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" clean open-source constraint-check assertion-coverage fault-injection \
+            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" clean open-source constraint-check assertion-coverage fault-injection release-manifest \
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Upload container RTL reports

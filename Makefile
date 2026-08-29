@@ -10,7 +10,7 @@ include config/design.mk
 include $(FLOW_ROOT)/config/tools.mk
 include $(FLOW_ROOT)/mk/module.mk
 
-.PHONY: all-modules assertion-coverage constraint-check fault-injection
+.PHONY: all-modules assertion-coverage constraint-check fault-injection release-manifest
 
 ## all-modules Run TARGET for every registered module in parallel
 all-modules:
@@ -29,3 +29,7 @@ constraint-check:
 ## fault-injection Prove that the verification environment detects known mutations
 fault-injection:
 	@"$(FAULT_INJECTION_SCRIPT)"
+
+## release-manifest Validate and index the module's release evidence
+release-manifest:
+	@"$(RELEASE_MANIFEST_SCRIPT)"

@@ -104,6 +104,9 @@ Reports are retained under `reports/dff/fault_injection/`.
 - Formal safety properties prove and cover goals are reachable.
 - Verible, Slang, Verilator, Yosys, and EQY checks pass.
 - Synchronous, asynchronous, and exploratory SDC profiles pass static intent checks.
+- The release manifest validates and indexes all required `PASS` and approved
+  `SKIP` evidence with source, methodology, tool, configuration, and constraint
+  identities.
 - OpenROAD passes when a qualified OpenROAD Flow Scripts platform is enabled.
 - Commercial static, synthesis, timing, and power checks pass when release scope
   requires them.

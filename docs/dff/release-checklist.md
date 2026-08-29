@@ -141,20 +141,24 @@ gate alone is not sufficient ASIC release evidence.
 
 - [x] Native `make clean open-source` passes.
 - [x] The pinned Docker image builds and its portable gate passes.
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _Current status: run `32812170952` passed for commit `d1f0f20`, before the
-  design top was renamed to `dff`. The current revision requires a new run._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33222830006` passed for commit `e54b7e4` with the pinned `mosaic-flow`
+  revision. The module-matrix, native, and container jobs all completed
+  successfully._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Not applicable for this release: VCS, Design Compiler, VC Lint, CDC, DFT,
   VC LP, PrimeTime, and PrimePower are approved optional-flow skips. The DFF
   acceptance gate is fully open-source._
-- [ ] Reports identify module revision, methodology revision, tool versions,
+- [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _Current status: portable status files exist, but a complete release evidence
-  manifest has not been produced._
-- [ ] CI or release storage retains logs and required databases.
-  _Current status: run `32812170952` retains artifacts for the previous design
-  top. Artifacts for the current `dff` revision require a new CI run._
+  _`make MODULE=dff release-manifest` validates all required evidence and writes
+  `reports/dff/release_manifest/manifest.txt` with revisions, tool versions,
+  configuration and constraint hashes, technology scope, generation date, and
+  the `PASS` or approved `SKIP` state of every flow._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33222830006` retains `dff-native-reports` and
+  `dff-container-reports` for commit `e54b7e4`. GitHub currently records both
+  artifacts for retention through November 27, 2026._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
@@ -167,6 +171,7 @@ make clean open-source
 make constraint-check
 make assertion-coverage
 make fault-injection
+make release-manifest
 ```
 
 Commercial adapters may be enabled by an integrating project when its release
