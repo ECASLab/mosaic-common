@@ -1,122 +1,107 @@
-# MOSAIC RTL module repository template
+# MOSAIC Common RTL Modules
 
-Template for one independently versioned MOSAIC RTL module. Each module owns
-its implementation, unit verification, design constraints, flow policy, and
-release evidence. The reusable execution methodology is pinned through the
-`mosaic-flow` Git submodule.
+`mosaic-common` contains reusable, technology-independent RTL primitives shared
+by MOSAIC and other hardware projects. Each module owns its RTL, verification,
+flow configuration, documentation, and release evidence while using the common
+repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 
-## Start here
+## Modules
 
-This file is the operational entry point for cloning and running the repository.
-The [module documentation index](docs/README.md) organizes the detailed design,
-configuration, verification, waiver, and release records. Shared flow behavior
-and tool adapters are documented in
-[`mosaic-flow/docs/`](mosaic-flow/docs/README.md).
+| Module | Description | Documentation |
+| --- | --- | --- |
+| `dff` | Parameterizable D flip-flop bank with configurable reset and enable behavior | [`docs/dff/`](docs/dff/) |
 
-Initialize the pinned methodology and run the portable acceptance gate:
+The authoritative module list used by local automation and the GitHub Actions
+matrix is [`.github/modules.json`](.github/modules.json).
+
+## Repository structure
+
+- `rtl/` contains synthesizable module implementations.
+- `verif/` contains testbenches, assertions, formal harnesses, static checks,
+  coverage campaigns, and fault-injection assets.
+- `filelists/` defines the sources consumed by each flow.
+- `config/modules/` defines each module's tops, paths, and required-flow policy.
+- `flows/` contains module-owned constraints and tool adapter inputs.
+- `docs/<module>/` contains module-specific interfaces, verification plans,
+  waivers, and release checklists.
+- `reports/<module>/` and `work/<module>/` contain generated evidence and build
+  products and are not source directories.
+
+See [`docs/creating-a-module.md`](docs/creating-a-module.md) for the registration
+procedure and [`docs/repository-structure.md`](docs/repository-structure.md) for
+the complete layout.
+
+## Run a module
+
+Initialize the pinned methodology, select a registered module, and run its
+portable acceptance gate from the repository root:
 
 ```sh
 git submodule update --init --recursive
-make flow-config-check
-make clean open-source
+make MODULE=dff flow-config-check
+make MODULE=dff clean open-source
 ```
 
-The first open-source target installs the pinned OSS CAD Suite, Verible, and
-Slang releases under `${XDG_CACHE_HOME:-$HOME/.cache}/mosaic`. Set
-`MOSAIC_TOOLS_ROOT` to use another cache location.
+Module-specific targets may extend the portable gate. Consult the selected
+module's documentation and list available targets with:
 
-## Repository contract
+```sh
+make help
+```
 
-Each module repository owns:
+After all required module-specific gates pass, generate the validated evidence
+index with:
 
-- Synthesizable RTL and public packages
-- Unit-level tests, assertions, formal properties, and coverage
-- Module-specific timing, CDC, DFT, and low-power intent
-- Flow enablement policy and design-owned flow inputs
-- Reviewed waivers with justification and ownership
-- Reproducible release evidence for supported configurations
+```sh
+make MODULE=dff release-manifest
+```
 
-The module must remain independently verifiable before system integration.
+The manifest is written under `reports/<module>/release_manifest/` and is
+included in the native and containerized GitHub Actions artifacts.
 
-## Layout
+The open-source infrastructure supports Verible formatting and lint, Slang
+elaboration, Verilator lint and simulation, Yosys synthesis, SymbiYosys formal
+verification, and EQY equivalence. Each module's reviewed flow policy determines
+which checks are required or disabled.
+
+## Run all modules
+
+Run the default target for every registered module concurrently with:
+
+```sh
+make all-modules
+make all-modules TARGET=open-sim
+```
+
+Set `JOBS` to limit concurrency. Reports and work products remain isolated under
+their module-specific directories so parallel jobs do not overwrite one another.
+GitHub Actions reads the same module manifest and runs native and containerized
+checks for each matrix entry.
+
+## Add a module
+
+Add the module's RTL and verification sources to the shared root directories,
+then provide dedicated file lists, flow inputs, documentation, and these two
+profiles:
 
 ```text
-rtl/                  Synthesizable SystemVerilog
-verif/                Tests, assertions, formal harnesses, models, and coverage
-filelists/            Ordered design and verification source lists
-config/               Module identity and flow policy
-flows/                Module-owned inputs grouped by shared flow name
-docs/                 Design, configuration, verification, and release records
-mosaic-flow/           Pinned shared methodology Git submodule
-reports/               Generated flow summaries and release evidence
-work/                  Generated tool databases
+config/modules/<name>.mk
+config/modules/<name>-flows.mk
 ```
 
-See the [repository structure](docs/repository-structure.md) for ownership and
-source-of-truth rules.
-
-Repositories that intentionally own several related RTL modules should use the
-[multi-module repository guide](docs/multi-module-repositories.md). Each module
-retains an independent project root, flow policy, regression, and report tree.
-
-## Configuration
-
-The root `Makefile` is a thin consumer of `mosaic-flow/mk/module.mk`.
-Module identity and paths belong in `config/design.mk`. Flow states and
-dependencies belong in `config/flows.mk`. Tool-specific project inputs mirror
-the shared hierarchy under `flows/<flow-name>/`.
-
-Do not edit the submodule to customize one module. The complete override model
-is documented in [Project configuration](docs/project-configuration.md).
-
-## Creating a module
-
-Start from [Creating a module](docs/creating-a-module.md). At minimum:
-
-1. Rename the example RTL and verification hierarchy.
-2. Replace the example datapath and smoke verification.
-3. Update file lists and all module tops.
-4. Define timing, CDC, DFT, low-power, formal, and physical intent.
-5. Review flow states and dependencies.
-6. Replace template documentation with module-specific records.
-7. Run native, containerized, and applicable commercial qualification.
-
-## Continuous integration
-
-`.github/workflows/rtl-simulation.yml` runs the complete open-source gate on
-pushes and pull requests using both native and containerized execution. It does
-not invoke licensed Synopsys tools.
-
-`ECASLab/mosaic-flow` is public, so CI does not require an additional repository
-secret. It checks out the exact submodule revision recorded here rather than a
-floating branch.
-
-Manual container build and execution commands are documented under
-[initial acceptance](docs/creating-a-module.md#run-initial-acceptance).
+Append the module name to [`.github/modules.json`](.github/modules.json). The
+local `all-modules` target and GitHub Actions matrix will then discover it.
 
 ## Commercial qualification
 
-Synopsys flows run only in an authorized local environment. Verify the
-environment explicitly before starting the aggregate flow:
+Licensed adapters are available for projects whose reviewed module policy
+requires commercial evidence:
 
 ```sh
-make synopsys-check-env
-make synopsys-all
+make MODULE=<name> synopsys-check-env
+make MODULE=<name> synopsys-all
 ```
 
-Commercial licenses, credentials, PDK paths, technology libraries, and site
-setup files must not be committed. The template VC Lint, CDC, SpyGlass DFT, and
-VC LP adapters require qualification against the locally installed tool release
-before they can provide signoff evidence.
-
-## Release policy
-
-A release is acceptable only when every enabled flow has the expected passing
-evidence and every disabled flow is justified by project policy. Use the
-[release checklist](docs/release-checklist.md) as the final review record and
-keep all accepted exceptions in [Reviewed waivers](docs/waivers.md).
-
-The open-source gate covers style, formatting, elaboration, lint, generic
-synthesis, formal verification, RTL-to-netlist equivalence, and simulation.
-Technology-mapped synthesis, timing, power, CDC, DFT, and low-power signoff use
-the configured local implementation environment.
+Run them only in an authorized environment with the required tools, libraries,
+site variables, and licenses. Disabled adapters record an approved `SKIP` and do
+not block a module's portable acceptance gate.

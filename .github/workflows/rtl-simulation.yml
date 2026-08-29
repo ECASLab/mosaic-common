@@ -12,10 +12,30 @@ env:
   FLOW_ROOT: ${{ github.workspace }}/mosaic-flow
 
 jobs:
+  module-matrix:
+    name: Read module matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.modules.outputs.matrix }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Read module manifest
+        id: modules
+        run: |
+          matrix="$(python3 -c \
+            $'import json\nprint(json.dumps(json.load(open(".github/modules.json"))))')"
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+
   rtl-checks:
-    name: Open-source RTL checks
+    name: ${{ matrix.name }} native checks
+    needs: module-matrix
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.module-matrix.outputs.matrix) }}
 
     steps:
       - name: Check out module repository
@@ -61,7 +81,7 @@ jobs:
           fi
 
       - name: Validate project flow selection
-        run: make flow-config-check
+        run: make MODULE="${{ matrix.name }}" flow-config-check
 
       - name: Cache open-source tools
         uses: actions/cache@v5
@@ -70,19 +90,20 @@ jobs:
           key: mosaic-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mosaic-flow/config/tool-versions.env') }}
 
       - name: Set up pinned open-source tools
-        run: make setup-open-source
+        run: make MODULE="${{ matrix.name }}" setup-open-source
 
       - name: Export pinned open-source tool paths
         run: |
           # shellcheck disable=SC2016
           make --no-print-directory --silent \
+            MODULE="${{ matrix.name }}" \
             --eval='mosaic-export-tool-paths: ; @printf "%s\n" "$(VERIBLE_ROOT)/bin" "$(SLANG_ROOT)/bin" "$(OSS_CAD_SUITE_ROOT)/bin"' \
             mosaic-export-tool-paths >> "${GITHUB_PATH}"
 
       - name: Record tool versions
         run: |
           set -o pipefail
-          mkdir -p reports/tool_versions
+          mkdir -p "reports/${{ matrix.name }}/tool_versions"
           {
             verilator --version
             yosys --version
@@ -90,27 +111,54 @@ jobs:
             eqy --version
             verible-verilog-lint --version
             slang --version
-          } | tee reports/tool_versions/versions.log
+          } | tee "reports/${{ matrix.name }}/tool_versions/versions.log"
 
       - name: Run portable open-source RTL flow
         run: |
           set -o pipefail
-          make open-source 2>&1 | tee ci-artifacts/native-flow.log
+          make MODULE="${{ matrix.name }}" open-source 2>&1 | tee ci-artifacts/native-flow.log
+
+      - name: Validate timing constraints
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" constraint-check 2>&1 | tee ci-artifacts/native-constraint-check.log
+
+      - name: Collect assertion coverage
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" assertion-coverage 2>&1 | tee ci-artifacts/native-assertion-coverage.log
+
+      - name: Run fault-injection qualification
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" fault-injection 2>&1 | tee ci-artifacts/native-fault-injection.log
+
+      - name: Generate release evidence manifest
+        env:
+          MODULE_REVISION: ${{ github.sha }}
+          METHODOLOGY_REVISION: ${{ steps.flow-revision.outputs.revision }}
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" release-manifest 2>&1 | tee ci-artifacts/native-release-manifest.log
 
       - name: Upload RTL reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: open-source-rtl-reports
+          name: ${{ matrix.name }}-native-reports
           path: |
-            reports/
+            reports/${{ matrix.name }}/
             ci-artifacts/
           if-no-files-found: error
 
   container-checks:
-    name: Containerized open-source RTL checks
+    name: ${{ matrix.name }} container checks
+    needs: module-matrix
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.module-matrix.outputs.matrix) }}
 
     steps:
       - name: Check out module repository
@@ -156,7 +204,7 @@ jobs:
           fi
 
       - name: Validate project flow selection
-        run: make flow-config-check
+        run: make MODULE="${{ matrix.name }}" flow-config-check
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -169,8 +217,8 @@ jobs:
             mosaic-flow=./mosaic-flow
           build-args: |
             MOSAIC_FLOW_REVISION=${{ steps.flow-revision.outputs.revision }}
-          cache-from: type=gha,scope=mosaic-module-ci
-          cache-to: type=gha,mode=max,scope=mosaic-module-ci
+          cache-from: type=gha,scope=mosaic-module-ci-${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=mosaic-module-ci-${{ matrix.name }}
           load: true
           platforms: linux/amd64
           push: false
@@ -182,16 +230,18 @@ jobs:
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
+            --env MODULE_REVISION="${GITHUB_SHA}" \
+            --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}" clean open-source \
+            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" clean open-source constraint-check assertion-coverage fault-injection release-manifest \
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Upload container RTL reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: container-open-source-rtl-reports
+          name: ${{ matrix.name }}-container-reports
           path: |
-            reports/
+            reports/${{ matrix.name }}/
             ci-artifacts/
           if-no-files-found: error
