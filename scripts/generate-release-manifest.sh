@@ -81,6 +81,7 @@ record_file() {
   echo "tool.yosys=$(single_line_version yosys)"
   echo "tool.symbiyosys=$(single_line_version sby)"
   echo "tool.eqy=$(single_line_version eqy)"
+  echo "tool.iverilog=$(single_line_version iverilog)"
 
   record_file "${MODULE_ROOT}/config/modules/${MODULE}.mk"
   record_file "${MODULE_ROOT}/config/modules/${MODULE}-flows.mk"

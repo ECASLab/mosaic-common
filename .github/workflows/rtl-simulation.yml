@@ -133,6 +133,11 @@ jobs:
           set -o pipefail
           make MODULE="${{ matrix.name }}" fault-injection 2>&1 | tee ci-artifacts/native-fault-injection.log
 
+      - name: Qualify four-state input handling
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.name }}" four-state-check 2>&1 | tee ci-artifacts/native-four-state-check.log
+
       - name: Run pinned OpenROAD physical flow
         if: matrix.name == 'clock_gate'
         run: |
@@ -241,7 +246,7 @@ jobs:
             --env MODULE_REVISION="${GITHUB_SHA}" \
             --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" FLOW_openroad=disabled clean open-source constraint-check assertion-coverage fault-injection release-manifest \
+            "mosaic-module-ci:${GITHUB_SHA}" MODULE="${{ matrix.name }}" FLOW_openroad=disabled clean open-source constraint-check assertion-coverage fault-injection four-state-check release-manifest \
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Upload container RTL reports
