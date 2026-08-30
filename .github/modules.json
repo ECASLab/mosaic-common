@@ -5,6 +5,9 @@
     },
     {
       "name": "counter"
+    },
+    {
+      "name": "clock_gate"
     }
   ]
 }

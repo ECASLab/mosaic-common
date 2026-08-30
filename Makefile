@@ -10,7 +10,7 @@ include config/design.mk
 include $(FLOW_ROOT)/config/tools.mk
 include $(FLOW_ROOT)/mk/module.mk
 
-.PHONY: all-modules assertion-coverage constraint-check fault-injection release-manifest
+.PHONY: all-modules assertion-coverage constraint-check fault-injection openroad-container release-manifest
 
 ## all-modules Run TARGET for every registered module in parallel
 all-modules:
@@ -40,6 +40,14 @@ fault-injection:
 		"$(FAULT_INJECTION_SCRIPT)"; \
 	else \
 		echo "No fault-injection campaign is configured for MODULE=$(MODULE)"; \
+	fi
+
+## openroad-container Run the pinned ORFS image and validate physical evidence
+openroad-container:
+	@if [[ -n "$(OPENROAD_CONTAINER_SCRIPT)" ]]; then \
+		"$(OPENROAD_CONTAINER_SCRIPT)"; \
+	else \
+		echo "No containerized OpenROAD flow is configured for MODULE=$(MODULE)"; \
 	fi
 
 ## release-manifest Validate and index the module's release evidence

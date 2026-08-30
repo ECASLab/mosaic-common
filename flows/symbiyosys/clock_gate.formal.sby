@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 12
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv clock_gate.sv clock_gate_formal.sv
+prep -top clock_gate_formal
+
+[files]
+rtl/clock_gate.sv
+verif/formal/clock_gate_formal.sv
