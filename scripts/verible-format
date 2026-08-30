@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Counter RTL and verification sources use four-space indentation. Other modules
-# retain Verible's default so existing formatting remains unchanged.
+# Counter and reset synchronizer sources use four-space indentation. Other
+# modules retain Verible's default so existing formatting remains unchanged.
 args=("$@")
 source_file="${args[${#args[@]}-1]}"
 
-if [[ "${source_file}" == *counter*.sv ]]; then
+if [[ "${source_file}" == *counter*.sv || "${source_file}" == *reset_synchronizer*.sv ]]; then
     args=(--indentation_spaces=4 "${args[@]}")
 fi
 

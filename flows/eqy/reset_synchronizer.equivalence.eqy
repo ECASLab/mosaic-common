@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv rtl/reset_synchronizer.sv
+prep -top reset_synchronizer
+
+[gate]
+read_verilog work/reset_synchronizer/yosys_synthesis/reset_synchronizer_netlist.v
+prep -top reset_synchronizer
+
+[strategy sby]
+use sby
+depth 8
+engine smtbmc bitwuzla

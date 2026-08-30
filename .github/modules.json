@@ -8,6 +8,9 @@
     },
     {
       "name": "clock_gate"
+    },
+    {
+      "name": "reset_synchronizer"
     }
   ]
 }

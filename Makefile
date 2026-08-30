@@ -10,7 +10,7 @@ include config/design.mk
 include $(FLOW_ROOT)/config/tools.mk
 include $(FLOW_ROOT)/mk/module.mk
 
-.PHONY: all-modules assertion-coverage constraint-check fault-injection openroad-container release-manifest
+.PHONY: all-modules assertion-coverage constraint-check fault-injection four-state-check openroad-container release-manifest
 
 ## all-modules Run TARGET for every registered module in parallel
 all-modules:
@@ -40,6 +40,14 @@ fault-injection:
 		"$(FAULT_INJECTION_SCRIPT)"; \
 	else \
 		echo "No fault-injection campaign is configured for MODULE=$(MODULE)"; \
+	fi
+
+## four-state-check Demonstrate detection of unknown control inputs
+four-state-check:
+	@if [[ -n "$(FOUR_STATE_CHECK_SCRIPT)" ]]; then \
+		"$(FOUR_STATE_CHECK_SCRIPT)"; \
+	else \
+		echo "No four-state input check is configured for MODULE=$(MODULE)"; \
 	fi
 
 ## openroad-container Run the pinned ORFS image and validate physical evidence
