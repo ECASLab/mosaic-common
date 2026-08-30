@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv rtl/clock_gate.sv
+prep -top clock_gate
+
+[gate]
+read_verilog work/clock_gate/yosys_synthesis/clock_gate_netlist.v
+prep -top clock_gate
+
+[strategy sby]
+use sby
+depth 8
+engine smtbmc bitwuzla

@@ -56,9 +56,17 @@ done
 for coverpoint in "${!required_coverpoints[@]}"; do
   expected_count="${required_coverpoints[${coverpoint}]}"
   emitted_count="$(grep -Ec "^BRDA:[0-9]+,[0-9]+,${coverpoint}," \
-    "${report_dir}/coverage.info")"
+    "${report_dir}/coverage.info" || true)"
   hit_count="$(grep -Ec "^BRDA:[0-9]+,[0-9]+,${coverpoint},[1-9][0-9]*$" \
-    "${report_dir}/coverage.info")"
+    "${report_dir}/coverage.info" || true)"
+  if [[ "${emitted_count}" == 0 ]]; then
+    # Some Verilator releases retain user coverpoint names only in coverage.dat
+    # while exporting their line hits without names in LCOV.
+    emitted_count="$(grep -Fc "${coverpoint}" "${coverage_data}")"
+    hit_count="$(awk -v name="${coverpoint}" \
+      'index($0, name) && $NF ~ /^[1-9][0-9]*$/ { count++ } END { print count + 0 }' \
+      "${coverage_data}")"
+  fi
   if [[ "${emitted_count}" != "${expected_count}" || "${hit_count}" != "${expected_count}" ]]; then
     echo "Coverpoint ${coverpoint}: expected ${expected_count} positive instance hits, got ${hit_count}/${emitted_count}" >&2
     exit 1
