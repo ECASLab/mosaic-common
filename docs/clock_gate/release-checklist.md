@@ -160,7 +160,11 @@ portable gate alone is not sufficient ASIC release evidence.
 - [x] Native `make clean open-source` passes.
 - [x] The pinned Docker image builds and its portable gate passes.
   _The DFF, counter, and clock-gate container commands pass locally._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33293103235` passes at module revision `4ec4339` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs pass for DFF,
+  counter, and clock gate. The clock-gate native job also passes the pinned
+  OpenROAD physical flow, release manifest, and artifact upload._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Commercial gates are not required for this portable release. VC LP, Design
   Compiler, PrimeTime, and PrimePower remain conditional integration gates as
