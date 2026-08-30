@@ -171,8 +171,12 @@ passing portable gate alone is not sufficient ASIC release evidence.
   revision `8fb2950` as image `sha256:9ab3d7e3a6e3`. Inside that image, the
   portable flow, constraint check, assertion coverage, fault injection,
   four-state check, and release manifest all passed._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _The module has not yet been validated by a pushed GitHub Actions run._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33329034154` passed for module revision `237ac61` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs completed
+  successfully for all four registered modules. The reset-synchronizer jobs
+  passed the portable flow, constraint, assertion-coverage, fault-injection,
+  four-state, and release-manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Not applicable to this portable leaf release. Every commercial flow records
   an approved policy `SKIP`. CDC/RDC remains mandatory at the first complete
@@ -180,11 +184,14 @@ passing portable gate alone is not sufficient ASIC release evidence.
   analysis is conditional on the consuming power architecture._
 - [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _The local release manifest validates the enabled portable evidence. It must
-  be regenerated after the implementation commit for final release evidence._
-- [ ] CI or release storage retains logs and required databases.
-  _Local reports exist, but retained CI artifacts require a successful pushed
-  workflow run._
+  _The native and container release manifests from run `33329034154` record
+  module revision `237ac61`, methodology revision `8fb2950`, tool versions,
+  configuration and constraint hashes, technology scope, and generation date._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33329034154` retains `reset_synchronizer-native-reports` and
+  `reset_synchronizer-container-reports` through November 28, 2026. The native
+  artifact contains the module reports and four-state evidence, while the
+  container artifact retains the corresponding pinned-environment results._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
