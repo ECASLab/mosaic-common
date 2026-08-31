@@ -13,6 +13,7 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | `counter` | Parameterizable saturating or wrapping up/down counter | [`docs/counter/`](docs/counter/) |
 | `clock_gate` | Glitch-free functional and test clock-gating wrapper | [`docs/clock_gate/`](docs/clock_gate/) |
 | `reset_synchronizer` | Asynchronous-assertion, synchronous-release reset synchronizer | [`docs/reset_synchronizer/`](docs/reset_synchronizer/) |
+| `lane_mask` | Parameterizable canonical vector-lane activity and derived control mask | [`docs/lane_mask/`](docs/lane_mask/) |
 
 The authoritative module list used by local automation and the GitHub Actions
 matrix is [`.github/modules.json`](.github/modules.json).

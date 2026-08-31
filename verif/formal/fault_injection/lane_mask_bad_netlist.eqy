@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv rtl/lane_mask.sv
+prep -top lane_mask
+
+[gate]
+read_verilog verif/formal/fault_injection/lane_mask_bad_netlist.v
+prep -top lane_mask
+
+[strategy sby]
+use sby
+depth 2
+engine smtbmc bitwuzla

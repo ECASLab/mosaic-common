@@ -42,13 +42,18 @@ fi
 
 single_line_version() {
   local command_name="$1"
+  local version_flag="--version"
 
   if ! command -v "${command_name}" >/dev/null 2>&1; then
     printf 'UNAVAILABLE'
     return
   fi
 
-  "${command_name}" --version 2>&1 | head -n 1 | tr '\t' ' '
+  if [[ "${command_name}" == "iverilog" ]]; then
+    version_flag="-V"
+  fi
+
+  "${command_name}" "${version_flag}" 2>&1 | head -n 1 | tr '\t' ' '
 }
 
 record_file() {

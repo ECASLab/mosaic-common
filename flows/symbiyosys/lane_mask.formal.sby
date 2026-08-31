@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv lane_mask.sv lane_mask_formal.sv
+prep -top lane_mask_formal
+
+[files]
+rtl/lane_mask.sv
+verif/formal/lane_mask_formal.sv
