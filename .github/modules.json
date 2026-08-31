@@ -11,6 +11,9 @@
     },
     {
       "name": "reset_synchronizer"
+    },
+    {
+      "name": "lane_mask"
     }
   ]
 }

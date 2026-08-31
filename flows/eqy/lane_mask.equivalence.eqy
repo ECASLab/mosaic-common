@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/lane_mask.sv
+prep -top lane_mask
+
+[gate]
+read_verilog work/lane_mask/yosys_synthesis/lane_mask_netlist.v
+prep -top lane_mask
+
+[strategy sat]
+use sat
+depth 1
