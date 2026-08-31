@@ -176,10 +176,11 @@ portable gate alone is not sufficient ASIC release evidence.
   `sha256:9ab3d7e3a6e3a940cfbbd7ab6d026d57a29004b67bb94d2b5942be8d42aa1be6`.
   Inside it, the portable flow, constraint check, assertion coverage, and
   release manifest all pass._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _The workflow matrix includes `priority_encoder` and reads the pinned
-  `mosaic-flow` gitlink. This item remains open until a remote run passes for a
-  committed module revision._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33375596934` passed for module revision `9494911` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs completed
+  successfully for all six registered modules. The priority-encoder jobs passed
+  the portable flow, constraint, coverage, and release-manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Not applicable to this portable combinational release. Every commercial flow
   records an approved policy `SKIP`; technology and system integration own the
@@ -190,10 +191,11 @@ portable gate alone is not sufficient ASIC release evidence.
   methodology revision `8fb2950`, portable tool versions, input hashes,
   technology-independent scope, configuration, and generation date. The current
   local manifest correctly marks the uncommitted source tree as dirty._
-- [ ] CI or release storage retains logs and required databases.
-  _The workflow uploads native and container reports with
-  `if-no-files-found: error`. This item remains open until a passing remote run
-  provides artifact identifiers and retention dates._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33375596934` retains `priority_encoder-native-reports` artifact
+  `9751771194` and `priority_encoder-container-reports` artifact `9751870642`
+  through November 29, 2026. The artifacts preserve module reports, release
+  manifests, and CI diagnostics from both qualified environments._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
