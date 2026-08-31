@@ -187,9 +187,12 @@ gate alone is not sufficient ASIC release evidence.
   from the pinned `mosaic-flow` revision `8fb2950`. The portable flow,
   constraint and power-intent checks, assertion coverage, fault injection,
   four-state simulation, and release manifest all pass inside the image._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _The module is registered in the matrix, but no committed branch revision has
-  produced remote evidence yet._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33434290737` passes for module revision `06101a0` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs completed
+  successfully for all seven registered modules. The level-shifter jobs passed
+  the portable flow, constraint and power-intent checks, assertion coverage,
+  fault injection, four-state simulation, and release-manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Approved `SKIP` at portable-wrapper scope. No commercial result is inferred.
   VC LP and technology-bound timing, power, and physical evidence remain
@@ -200,10 +203,11 @@ gate alone is not sufficient ASIC release evidence.
   _The local release manifest records revisions, portable tool versions, input
   hashes, technology-independent scope, configuration, and generation date. It
   correctly marks the current uncommitted source tree as dirty._
-- [ ] CI or release storage retains logs and required databases.
-  _The workflow is configured to upload native and container reports even after
-  failed jobs. This item remains open until the committed branch produces remote
-  artifact identifiers and retention dates._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33434290737` retains `level_shifter-native-reports` artifact
+  `9773849929` and `level_shifter-container-reports` artifact `9773985357`
+  through November 29, 2026. The artifacts preserve module reports, release
+  manifests, and CI diagnostics from both qualified environments._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
