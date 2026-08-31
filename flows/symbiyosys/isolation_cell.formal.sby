@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv isolation_cell.sv isolation_cell_formal.sv
+prep -top isolation_cell_formal
+
+[files]
+rtl/isolation_cell.sv
+verif/formal/isolation_cell_formal.sv
