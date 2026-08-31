@@ -160,18 +160,26 @@ portable gate alone is not sufficient ASIC release evidence.
   `sha256:9ab3d7e3a6e3a940cfbbd7ab6d026d57a29004b67bb94d2b5942be8d42aa1be6`.
   Inside it, the portable flow, constraints, coverage, fault injection,
   four-state check, and release manifest all pass._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33352609494` passed for module revision `04085ce` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs completed
+  successfully for all five registered modules. The lane-mask jobs passed the
+  portable flow, constraint, coverage, fault-injection, four-state, and
+  release-manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Not applicable to this portable combinational release. Every commercial flow
   records an approved policy `SKIP`; technology and system integration own the
   conditional signoff gates described above._
 - [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _The release manifest records module revision `95fd2f1`, methodology revision
+  _The CI release manifests record module revision `04085ce`, methodology revision
   `8fb2950`, tool versions, input hashes, technology-independent scope,
-  configuration, and generation date. It correctly marks the source tree dirty
-  because this is pre-commit evidence._
-- [ ] CI or release storage retains logs and required databases.
+  configuration, and generation date._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33352609494` retains `lane_mask-native-reports` artifact `9744145653`
+  and `lane_mask-container-reports` artifact `9744214126` through November 29,
+  2026. The artifacts preserve the module reports and CI diagnostics from both
+  qualified environments._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
