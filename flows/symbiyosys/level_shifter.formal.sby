@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv level_shifter.sv level_shifter_formal.sv
+prep -top level_shifter_formal
+
+[files]
+rtl/level_shifter.sv
+verif/formal/level_shifter_formal.sv
