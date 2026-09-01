@@ -153,7 +153,10 @@ gate alone is not sufficient ASIC release evidence.
   _The local CI-equivalent image builds at digest `9ab3d7e3a6e3` and passes the
   portable flow, constraints, assertion coverage, negative tests, four-state
   checks, and release-manifest generation for `retention_register`._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Workflow run `33467608236` passes at module revision `d180c20` with the
+  `mosaic-flow` gitlink pinned to `8fb2950`. Both native and container jobs pass
+  the portable, constraint, coverage, negative, four-state, and manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Commercial gates are policy `SKIP` for portable RTL qualification. VC LP,
   mapped synthesis, STA, DFT, and power become mandatory at technology binding._
@@ -161,7 +164,10 @@ gate alone is not sufficient ASIC release evidence.
   constraints, technology, date, and configuration.
   _The generated release manifest records repository and methodology revisions,
   tool identities, selected flows, constraints, UPF, and evidence hashes._
-- [ ] CI or release storage retains logs and required databases.
+- [x] CI or release storage retains logs and required databases.
+  _Artifacts `retention_register-native-reports` (`9785422273`) and
+  `retention_register-container-reports` (`9785514420`) retain the reports and
+  diagnostics from run `33467608236` through November 30, 2026._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
