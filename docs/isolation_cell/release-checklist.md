@@ -187,9 +187,13 @@ gate alone is not sufficient ASIC release evidence.
   constraint and power-intent checks, assertion coverage, fault injection,
   invalid-parameter tests, four-state simulation, and release manifest all
   pass inside the image._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _The module is registered in the matrix, but no committed revision has remote
-  evidence yet._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Run `33453975143` passes for module revision `adeae84` with the
+  `mosaic-flow` gitlink at `8fb2950`. Native and container jobs completed
+  successfully for all seven registered modules. The isolation-cell jobs passed
+  the portable flow, constraint and power-intent checks, assertion coverage,
+  fault injection, invalid-parameter tests, four-state simulation, and
+  release-manifest gates._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Approved `SKIP` at portable-wrapper scope. No commercial result is inferred.
   VC LP, technology-bound synthesis, timing, power, DFT, and physical evidence
@@ -199,8 +203,11 @@ gate alone is not sufficient ASIC release evidence.
   _The local release manifest records module and methodology revisions,
   portable tool versions, input hashes, technology-independent scope,
   configuration, and generation date, and marks the current source tree dirty._
-- [ ] CI or release storage retains logs and required databases.
-  _No remote artifact identifiers or retention dates exist yet._
+- [x] CI or release storage retains logs and required databases.
+  _Run `33453975143` retains `isolation_cell-native-reports` artifact
+  `9780800252` and `isolation_cell-container-reports` artifact `9780884320`
+  through November 30, 2026. The artifacts preserve module reports, release
+  manifests, and CI diagnostics from both qualified environments._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
