@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Counter, reset synchronizer, lane mask, and priority encoder sources use four-space indentation.
+# Counter, reset synchronizer, lane mask, priority encoder, and retention register sources use four-space indentation.
 # Other modules retain Verible's default so existing formatting remains unchanged.
 args=("$@")
 source_file="${args[${#args[@]}-1]}"
 
-if [[ "${source_file}" == *counter*.sv || "${source_file}" == *reset_synchronizer*.sv || "${source_file}" == *lane_mask*.sv || "${source_file}" == *priority_encoder*.sv ]]; then
+if [[ "${source_file}" == *counter*.sv || "${source_file}" == *reset_synchronizer*.sv || "${source_file}" == *lane_mask*.sv || "${source_file}" == *priority_encoder*.sv || "${source_file}" == *retention_register*.sv ]]; then
     args=(--indentation_spaces=4 "${args[@]}")
 fi
 

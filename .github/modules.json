@@ -17,6 +17,9 @@
     },
     {
       "name": "priority_encoder"
+    },
+    {
+      "name": "retention_register"
     }
   ]
 }

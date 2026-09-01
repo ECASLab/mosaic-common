@@ -97,6 +97,15 @@ record_file() {
   if [[ -n "${OPENROAD_CONFIG:-}" ]]; then
     record_file "${OPENROAD_CONFIG}"
   fi
+  if [[ -n "${CDC_CONFIG:-}" ]]; then
+    record_file "${CDC_CONFIG}"
+  fi
+  if [[ -n "${DFT_CONFIG:-}" ]]; then
+    record_file "${DFT_CONFIG}"
+  fi
+  if [[ -n "${UPF_CONFIG:-}" ]]; then
+    record_file "${UPF_CONFIG}"
+  fi
 
   for flow in ${MOSAIC_FLOW_IDS}; do
     state_variable="FLOW_${flow}"
