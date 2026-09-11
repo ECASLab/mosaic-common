@@ -1,0 +1,30 @@
+# Portable isolation intent; projects must replace voltages and bind approved cells.
+set_design_top isolation_cell
+
+create_power_domain PD_SOURCE -elements {.}
+create_power_domain PD_DESTINATION -include_scope
+
+create_supply_port VDD_SOURCE -domain PD_SOURCE
+create_supply_port VDD_DESTINATION -domain PD_DESTINATION
+create_supply_port VSS -domain PD_DESTINATION
+create_supply_net VDD_SOURCE -domain PD_SOURCE
+create_supply_net VDD_DESTINATION -domain PD_DESTINATION
+create_supply_net VSS -domain PD_DESTINATION -reuse
+connect_supply_net VDD_SOURCE -ports VDD_SOURCE
+connect_supply_net VDD_DESTINATION -ports VDD_DESTINATION
+connect_supply_net VSS -ports VSS
+set_domain_supply_net PD_SOURCE -primary_power_net VDD_SOURCE -primary_ground_net VSS
+set_domain_supply_net PD_DESTINATION -primary_power_net VDD_DESTINATION -primary_ground_net VSS
+
+add_port_state VDD_SOURCE -state {SOURCE_ON 0.8} -state {SOURCE_OFF off}
+add_port_state VDD_DESTINATION -state {DESTINATION_ON 0.8}
+create_pst PST_ISOLATION -supplies {VDD_SOURCE VDD_DESTINATION}
+add_pst_state BOTH_ON -pst PST_ISOLATION -state {SOURCE_ON DESTINATION_ON}
+add_pst_state SOURCE_OFF -pst PST_ISOLATION -state {SOURCE_OFF DESTINATION_ON}
+
+set_port_attributes -ports i_data -driver_supply VDD_SOURCE -receiver_supply VDD_DESTINATION
+set_port_attributes -ports i_isolate -driver_supply VDD_DESTINATION -receiver_supply VDD_DESTINATION
+set_port_attributes -ports o_data -driver_supply VDD_DESTINATION -receiver_supply VDD_DESTINATION
+set_isolation ISO_SOURCE_OUTPUT -domain PD_SOURCE -applies_to outputs \
+    -clamp_value 0 -isolation_signal i_isolate -isolation_sense high \
+    -location parent
