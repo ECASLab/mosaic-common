@@ -15,6 +15,7 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | `reset_synchronizer` | Asynchronous-assertion, synchronous-release reset synchronizer | [`docs/reset_synchronizer/`](docs/reset_synchronizer/) |
 | `lane_mask` | Parameterizable canonical vector-lane activity and derived control mask | [`docs/lane_mask/`](docs/lane_mask/) |
 | `priority_encoder` | Parameterizable fixed-priority request selection | [`docs/priority_encoder/`](docs/priority_encoder/) |
+| `level_shifter` | Technology-independent model of a unidirectional voltage-domain crossing | [`docs/level_shifter/`](docs/level_shifter/) |
 | `isolation_cell` | Parameterizable power-domain isolation and compile-time clamp behavior | [`docs/isolation_cell/`](docs/isolation_cell/) |
 
 The authoritative module list used by local automation and the GitHub Actions

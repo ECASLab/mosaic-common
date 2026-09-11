@@ -19,6 +19,9 @@
       "name": "priority_encoder"
     },
     {
+      "name": "level_shifter"
+    },
+    {
       "name": "isolation_cell"
     }
   ]
