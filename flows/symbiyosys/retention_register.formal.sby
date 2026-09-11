@@ -1,0 +1,14 @@
+[options]
+mode bmc
+depth 12
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv retention_register.sv retention_register_formal.sv
+prep -top retention_register_formal
+
+[files]
+rtl/retention_register.sv
+verif/formal/retention_register_formal.sv
