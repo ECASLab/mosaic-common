@@ -1,0 +1,31 @@
+# Portable always-on two-domain profile. Integration must replace nominal
+# voltages, legal power states, cell mapping, and isolation policy as required.
+set_design_top level_shifter
+
+create_power_domain PD_SOURCE
+create_power_domain PD_DESTINATION -include_scope
+
+create_supply_port VDD_SOURCE -domain PD_SOURCE
+create_supply_port VDD_DESTINATION -domain PD_DESTINATION
+create_supply_port VSS
+create_supply_net VDD_SOURCE -domain PD_SOURCE
+create_supply_net VDD_DESTINATION -domain PD_DESTINATION
+create_supply_net VSS
+connect_supply_net VDD_SOURCE -ports VDD_SOURCE
+connect_supply_net VDD_DESTINATION -ports VDD_DESTINATION
+connect_supply_net VSS -ports VSS
+set_domain_supply_net PD_SOURCE -primary_power_net VDD_SOURCE -primary_ground_net VSS
+set_domain_supply_net PD_DESTINATION -primary_power_net VDD_DESTINATION -primary_ground_net VSS
+
+add_port_state VDD_SOURCE -state {SOURCE_ON 0.8}
+add_port_state VDD_DESTINATION -state {DESTINATION_ON 1.0}
+create_pst PST_LEVEL_SHIFTER -supplies {VDD_SOURCE VDD_DESTINATION}
+add_pst_state BOTH_ON -pst PST_LEVEL_SHIFTER -state {SOURCE_ON DESTINATION_ON}
+
+set_port_attributes -ports i_data -receiver_supply VDD_SOURCE
+set_port_attributes -ports o_data -driver_supply VDD_DESTINATION
+set_level_shifter LS_LEVEL_SHIFTER -domain PD_DESTINATION -applies_to inputs -rule both -location self
+
+# This profile intentionally defines no isolation or retention. A switchable
+# source requires an integration-level isolation strategy or an approved
+# combined isolation and level-shifter cell.
