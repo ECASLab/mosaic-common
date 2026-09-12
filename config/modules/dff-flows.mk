@@ -7,6 +7,7 @@ FLOW_yosys_synthesis := enabled
 FLOW_symbiyosys_formal := enabled
 FLOW_eqy_equivalence := enabled
 FLOW_verilator_sim := enabled
+FLOW_static_intent := enabled
 
 # Physical implementation is outside the reusable RTL release scope.
 FLOW_openroad := disabled

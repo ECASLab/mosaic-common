@@ -65,3 +65,25 @@ Expires or removal condition: Revisit if the formal harness stops using the
 Yosys global-clock model, if the warning appears on another signal or design
 object, or if the selected Yosys/SymbiYosys release provides a driven-clock
 model that preserves equivalent proof semantics.
+ID: `DFF-LINT-002`
+
+Tool and rule: Verilator `UNUSEDSIGNAL`.
+
+Affected file and object: `rtl/dff.sv`, port `i_enable` at line 13.
+
+Technical justification: The `HAS_ENABLE=0` profile intentionally removes the
+functional use of `i_enable` while retaining the stable module interface. The
+selected structure captures on every clock edge.
+
+Evidence: `make MODULE=dff PROFILE=vector_sync_no_enable clean open-source`
+passes the complete portable qualification graph.
+
+Owner: DFF module owner.
+
+Reviewer: Erick Andres Obregon Fonseca.
+
+Created: 2026-09-11.
+
+Expires or removal condition: Remove when the interface is split into separate
+enabled and always-capture modules, or when the lint tool supports a
+parameter-conditional port-use exemption.

@@ -1,0 +1,48 @@
+{
+    "schema": "mosaic-static-intent-v1",
+    "sdc": {
+        "profiles": [
+            {
+                "name": "synchronous",
+                "path": "flows/synthesis/timing.sdc",
+                "kind": "sequential",
+                "expected_ports": {
+                    "clock": ["i_clk"],
+                    "input_delay": ["i_rstb", "i_enable", "i_d"],
+                    "output_delay": ["o_q"]
+                },
+                "clocks": [{"name": "i_clk", "period": 10.0, "port": "i_clk"}]
+            },
+            {
+                "name": "asynchronous",
+                "path": "flows/synthesis/timing_async.sdc",
+                "kind": "sequential",
+                "expected_ports": {
+                    "clock": ["i_clk"],
+                    "input_delay": ["i_rstb", "i_enable", "i_d"],
+                    "output_delay": ["o_q"]
+                },
+                "clocks": [{"name": "i_clk", "period": 10.0, "port": "i_clk"}]
+            }
+        ],
+        "consistency": [
+            {
+                "profiles": ["synchronous", "asynchronous"],
+                "commands": ["create_clock", "set_clock_uncertainty", "set_input_delay", "set_output_delay"]
+            }
+        ]
+    },
+    "upf": {
+        "path": "flows/vc_lp/power.upf",
+        "top": "dff",
+        "mode": "always_on",
+        "required": {
+            "power_domains": ["PD_DFF"],
+            "supply_ports": ["VDD", "VSS"],
+            "supply_nets": ["VDD", "VSS"],
+            "supply_connections": ["VDD", "VSS"],
+            "domain_supplies": ["PD_DFF"]
+        },
+        "forbidden_strategies": ["isolation", "level_shifting", "retention", "power_switch"]
+    }
+}

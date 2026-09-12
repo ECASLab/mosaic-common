@@ -1,0 +1,7 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {"name": "scalar_active_high", "parameters": {"WIDTH": 1, "CLAMP_VALUE": 0, "ISOLATE_ACTIVE_HIGH": true}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "isolation_cell", "testbench": "isolation_cell_checker", "formal": "isolation_cell_profile_formal"}},
+        {"name": "vector_active_low", "parameters": {"WIDTH": 32, "CLAMP_VALUE": "32'hA5A55A5A", "ISOLATE_ACTIVE_HIGH": false}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "isolation_cell", "testbench": "isolation_cell_checker", "formal": "isolation_cell_profile_formal"}}
+    ]
+}
