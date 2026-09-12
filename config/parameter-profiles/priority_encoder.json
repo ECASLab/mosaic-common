@@ -1,0 +1,7 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {"name": "single_lsb", "parameters": {"WIDTH": 1, "LSB_HIGH_PRIORITY": true}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "priority_encoder", "testbench": "priority_encoder_checker", "formal": "priority_encoder_formal_checker"}},
+        {"name": "vector_msb", "parameters": {"WIDTH": 32, "LSB_HIGH_PRIORITY": false}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "priority_encoder", "testbench": "priority_encoder_checker", "formal": "priority_encoder_formal_checker"}}
+    ]
+}

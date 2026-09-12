@@ -10,9 +10,10 @@ smtbmc bitwuzla
 
 [script]
 # The harness instantiates the complete reset-style and enable-style matrix.
-read -formal -sv dff.sv dff_formal.sv
+read -formal -sv dff.sv dff_formal.sv dff_profile_formal.sv
 prep -top dff_formal
 
 [files]
 rtl/dff.sv
 verif/formal/dff_formal.sv
+verif/formal/dff_profile_formal.sv

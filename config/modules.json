@@ -1,0 +1,14 @@
+{
+    "schema": "mosaic-modules-v1",
+    "include": [
+        {"name": "dff"},
+        {"name": "counter"},
+        {"name": "clock_gate"},
+        {"name": "reset_synchronizer"},
+        {"name": "lane_mask"},
+        {"name": "priority_encoder"},
+        {"name": "level_shifter"},
+        {"name": "isolation_cell"},
+        {"name": "retention_register"}
+    ]
+}

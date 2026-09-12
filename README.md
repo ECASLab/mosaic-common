@@ -20,7 +20,8 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | `retention_register` | Parameterizable visible state with explicit save and restore behavior | [`docs/retention_register/`](docs/retention_register/) |
 
 The authoritative module list used by local automation and the GitHub Actions
-matrix is [`.github/modules.json`](.github/modules.json).
+matrix is [`config/modules.json`](config/modules.json). Parameterized modules
+declare their qualified elaborations in `config/parameter-profiles/`.
 
 ## Repository structure
 
@@ -46,8 +47,8 @@ portable acceptance gate from the repository root:
 
 ```sh
 git submodule update --init --recursive
-make MODULE=dff flow-config-check
-make MODULE=dff clean open-source
+make MODULE=dff PROFILE=default flow-config-check
+make MODULE=dff PROFILE=default clean open-source
 ```
 
 Module-specific targets may extend the portable gate. Consult the selected
@@ -61,7 +62,7 @@ After all required module-specific gates pass, generate the validated evidence
 index with:
 
 ```sh
-make MODULE=dff release-manifest
+make MODULE=dff PROFILE=default release-manifest release-manifest-validate
 ```
 
 The manifest is written under `reports/<module>/release_manifest/` and is
@@ -78,7 +79,7 @@ Run the default target for every registered module concurrently with:
 
 ```sh
 make all-modules
-make all-modules TARGET=open-sim
+make TARGET=open-sim all-modules
 ```
 
 Set `JOBS` to limit concurrency. Reports and work products remain isolated under
@@ -97,8 +98,10 @@ config/modules/<name>.mk
 config/modules/<name>-flows.mk
 ```
 
-Append the module name to [`.github/modules.json`](.github/modules.json). The
-local `all-modules` target and GitHub Actions matrix will then discover it.
+Append the module name to [`config/modules.json`](config/modules.json), and add
+`config/parameter-profiles/<name>.json` whenever the module has structural
+parameters. The local `all-modules` target and GitHub Actions matrix will then
+discover it.
 
 ## Commercial qualification
 

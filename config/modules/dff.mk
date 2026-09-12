@@ -6,6 +6,9 @@ export DUT_INSTANCE := $(TB_TOP)/checker_async_scalar/dut
 
 # Tool adapters consume design-owned inputs through these canonical paths.
 export FLOW_CONFIG_ROOT := $(MODULE_ROOT)/flows
+# Restrict independent DFF jobs to DFF-owned sources; other modules retain
+# their own formatting policy and cannot affect this qualification result.
+export VERIBLE_FORMAT_PATHS := rtl/dff.sv verif/assertions/dff_bind.sv verif/assertions/dff_sva.sv verif/formal/dff_formal.sv verif/tb/dff_checker.sv verif/tb/dff_tb.sv verif/tb/fault_injection/dff_mutant.sv
 export RTL_FILELIST := $(call resolve_filelist,rtl.f)
 export TB_FILELIST := $(call resolve_filelist,tb.f)
 export FORMAL_FILELIST := $(call resolve_filelist,formal.f)
@@ -21,6 +24,7 @@ export OPENROAD_CONSTRAINT_FILE := $(FLOW_CONFIG_ROOT)/openroad/timing.sdc
 export CDC_CONFIG := $(call resolve_flow_config,cdc,constraints.tcl)
 export DFT_CONFIG := $(call resolve_flow_config,sg_dft,constraints.tcl)
 export UPF_CONFIG := $(call resolve_flow_config,vc_lp,power.upf)
+export STATIC_INTENT_CONFIG := $(MODULE_ROOT)/config/static-intent/dff.json
 export CONSTRAINT_DIR := $(FLOW_CONFIG_ROOT)/synthesis
 export ASSERTION_COVERAGE_SCRIPT := $(MODULE_ROOT)/verif/tb/assertion_coverage/run_assertion_coverage.sh
 export ASSERTION_COVERPOINT_REQUIREMENTS := reset_covered=7 reset_priority_covered=7 enabled_capture_covered=5 hold_covered=5 always_capture_covered=2 async_reset_covered=3

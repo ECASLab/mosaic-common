@@ -6,3 +6,5 @@
 // Scope waivers as narrowly as possible. Examples:
 // lint_off -rule UNUSEDPARAM -file "rtl/example.sv" -lines 10-10
 // lint_off -rule WIDTH -file "rtl/example.sv" -match "*specific message text*"
+// HAS_ENABLE=0 removes the functional use of this required interface port.
+lint_off -rule UNUSEDSIGNAL -file "rtl/dff.sv" -lines 13-13
