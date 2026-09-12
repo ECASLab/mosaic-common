@@ -237,6 +237,8 @@ jobs:
             --env HOME=/tmp \
             --env MODULE_REVISION="${GITHUB_SHA}" \
             --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
+            --env RELEASE_METHODOLOGY_DIRTY=false \
+            --env RELEASE_EXECUTION_CONTEXT=container \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
             "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" clean open-source release-manifest release-manifest-validate \
             2>&1 | tee ci-artifacts/container-flow.log
