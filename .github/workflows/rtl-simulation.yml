@@ -137,6 +137,12 @@ jobs:
           set -o pipefail
           make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" clean open-source 2>&1 | tee ci-artifacts/native-flow.log
 
+      - name: Run clock-gate OpenROAD physical flow
+        if: matrix.module == 'clock_gate'
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" OPENROAD_EXECUTION_MODE=container open-physical 2>&1 | tee ci-artifacts/native-openroad.log
+
       - name: Generate release evidence manifest
         env:
           MODULE_REVISION: ${{ github.sha }}
@@ -151,8 +157,8 @@ jobs:
         with:
           name: ${{ matrix.job_name }}-native-reports
           path: |
-            reports/${{ matrix.module }}/${{ matrix.profile }}/
-            work/${{ matrix.module }}/${{ matrix.profile }}/
+            reports/${{ matrix.module }}/
+            work/${{ matrix.module }}/
             ci-artifacts/
           if-no-files-found: error
 
@@ -240,7 +246,7 @@ jobs:
             --env RELEASE_METHODOLOGY_DIRTY=false \
             --env RELEASE_EXECUTION_CONTEXT=container \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" clean open-source release-manifest release-manifest-validate \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled clean open-source release-manifest release-manifest-validate \
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Upload container RTL reports
@@ -249,6 +255,6 @@ jobs:
         with:
           name: ${{ matrix.job_name }}-container-reports
           path: |
-            reports/${{ matrix.module }}/${{ matrix.profile }}/
+            reports/${{ matrix.module }}/
             ci-artifacts/
           if-no-files-found: error
