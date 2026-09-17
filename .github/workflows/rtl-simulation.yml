@@ -143,12 +143,36 @@ jobs:
           set -o pipefail
           make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" OPENROAD_EXECUTION_MODE=container open-physical 2>&1 | tee ci-artifacts/native-openroad.log
 
+      - name: Run representative write-gate OpenROAD physical flow
+        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+        run: |
+          set -o pipefail
+          make MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 \
+            OPENROAD_EXECUTION_MODE=container open-physical \
+            2>&1 | tee ci-artifacts/native-write-gate-openroad.log
+          openroad_dir=reports/write_gate/width_2/openroad
+          cp "${openroad_dir}/status.txt" "${openroad_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${openroad_dir}/status.txt"
+
+      - name: Qualify write-gate functional and structural coverage
+        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+        run: |
+          set -o pipefail
+          make MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 open-coverage \
+            2>&1 | tee ci-artifacts/native-write-gate-coverage.log
+          coverage_dir=reports/write_gate/width_2/coverage_qualification
+          cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${coverage_dir}/status.txt"
+
       - name: Generate release evidence manifest
         env:
           MODULE_REVISION: ${{ github.sha }}
           METHODOLOGY_REVISION: ${{ steps.flow-revision.outputs.revision }}
         run: |
           set -o pipefail
+          if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/write_gate/width_2/coverage_qualification/forced-status.txt reports/write_gate/width_2/openroad/evidence.json reports/write_gate/width_2/openroad/forced-status.txt"
+          fi
           make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" release-manifest release-manifest-validate 2>&1 | tee ci-artifacts/native-release-manifest.log
 
       - name: Upload RTL reports
@@ -246,8 +270,41 @@ jobs:
             --env RELEASE_METHODOLOGY_DIRTY=false \
             --env RELEASE_EXECUTION_CONTEXT=container \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled clean open-source release-manifest release-manifest-validate \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled clean open-source \
             2>&1 | tee ci-artifacts/container-flow.log
+
+      - name: Qualify write-gate functional and structural coverage in container
+        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+        run: |
+          set -o pipefail
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 open-coverage \
+            2>&1 | tee ci-artifacts/container-write-gate-coverage.log
+          coverage_dir=reports/write_gate/width_2/coverage_qualification
+          cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${coverage_dir}/status.txt"
+
+      - name: Generate release evidence manifest in container
+        run: |
+          set -o pipefail
+          additional_evidence=""
+          if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
+            additional_evidence="reports/write_gate/width_2/coverage_qualification/forced-status.txt"
+          fi
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --env MODULE_REVISION="${GITHUB_SHA}" \
+            --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
+            --env RELEASE_ADDITIONAL_EVIDENCE="${additional_evidence}" \
+            --env RELEASE_METHODOLOGY_DIRTY=false \
+            --env RELEASE_EXECUTION_CONTEXT=container \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" release-manifest release-manifest-validate \
+            2>&1 | tee ci-artifacts/container-release-manifest.log
 
       - name: Upload container RTL reports
         if: always()

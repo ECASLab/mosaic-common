@@ -1,0 +1,53 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {
+            "name": "width_1",
+            "parameters": {"WIDTH": 1},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "negative_qualification", "four_state_qualification", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_2",
+            "parameters": {"WIDTH": 2},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_4",
+            "parameters": {"WIDTH": 4},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_8",
+            "parameters": {"WIDTH": 8},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_16",
+            "parameters": {"WIDTH": 16},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_32",
+            "parameters": {"WIDTH": 32},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_64",
+            "parameters": {"WIDTH": 64},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        },
+        {
+            "name": "width_128",
+            "parameters": {"WIDTH": 128},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "write_gate", "testbench": "write_gate_tb", "formal": "write_gate_formal"}
+        }
+    ]
+}

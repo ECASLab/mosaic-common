@@ -9,6 +9,7 @@
         {"name": "priority_encoder"},
         {"name": "level_shifter"},
         {"name": "isolation_cell"},
-        {"name": "retention_register"}
+        {"name": "retention_register"},
+        {"name": "write_gate"}
     ]
 }

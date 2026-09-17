@@ -1,0 +1,28 @@
+{
+    "schema": "mosaic-static-intent-v1",
+    "sdc": {
+        "profiles": [
+            {"name": "synthesis", "path": "flows/synthesis/write_gate.timing.sdc", "kind": "combinational"},
+            {"name": "physical", "path": "flows/openroad/write_gate.timing.sdc", "kind": "combinational"}
+        ],
+        "consistency": [
+            {
+                "profiles": ["synthesis", "physical"],
+                "commands": ["set_input_transition", "set_load", "set_max_delay"]
+            }
+        ]
+    },
+    "upf": {
+        "path": "flows/vc_lp/write_gate.power.upf",
+        "top": "write_gate",
+        "mode": "always_on",
+        "required": {
+            "power_domains": ["PD_WRITE_GATE"],
+            "supply_ports": ["VDD", "VSS"],
+            "supply_nets": ["VDD", "VSS"],
+            "supply_connections": ["VDD", "VSS"],
+            "domain_supplies": ["PD_WRITE_GATE"]
+        },
+        "forbidden_strategies": ["isolation", "level_shifting", "retention", "power_switch"]
+    }
+}
