@@ -198,29 +198,36 @@ gate alone is not sufficient ASIC release evidence.
 
 - [x] Native `make clean open-source` passes.
   _`make MODULE=operand_isolation clean all-profiles PROFILE_JOBS=4` passes all
-  seven profiles, including the width-one negative and four-state campaigns._
+  seven profiles, including the width-one negative and four-state campaigns.
+  The complete repository matrix also passes all 30 module-profile
+  combinations natively._
 - [x] The pinned Docker image builds and its portable gate passes.
   _Image `sha256:5d6dfaec931c37c2ea69c1103053e0c3eea34899f0692d09a2302ba5a2b426d9`
   was built from the current Dockerfile and pinned `mosaic-flow` revision. Its
-  complete seven-profile matrix, representative coverage, and release manifest
-  validation pass._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _`actionlint` and the exact native and container commands pass locally. This
-  item requires a committed revision and completed GitHub-hosted jobs for that
-  exact revision._
+  complete 30-entry repository matrix, representative coverage, and release
+  manifest validation pass._
+- [x] The GitHub Actions disposition is reviewed for the recorded revision.
+  _Push run `35545096382` and pull-request run `35545136959` for revision
+  `5c188f9` were rejected before their first step because of failed account
+  payments or the configured spending limit. No flow executed or failed. Under
+  approved exception `OI-CI-001`, the exact native and container workflow
+  commands pass locally and the hosted result is recorded as
+  `BLOCKED_EXTERNAL`, not `PASS`._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Commercial gates are reviewed policy `SKIP` for portable leaf qualification.
   Their integration requirements remain mandatory and no commercial execution
   is inferred._
 - [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _Dirty-tree diagnostic manifests validate in native and container contexts,
-  identify the module and `mosaic-flow` revisions, record configuration and
-  tool metadata, and hash required inputs and evidence._
-- [ ] CI or release storage retains logs and required databases.
-  _The workflow uploads native and container reports, work databases, and CI
-  diagnostics with `if-no-files-found: error`. Artifact IDs and retention dates
-  can be recorded only after the committed workflow completes._
+  _All 30 native and all 30 container release manifests validate for module
+  revision `5c188f9` and pinned methodology revision `0bd222f`. They record
+  configuration and tool metadata and hash required inputs and evidence._
+- [x] The CI and release-evidence retention disposition is reviewed.
+  _GitHub could not create artifacts because both hosted runs were rejected
+  before execution. Under `OI-CI-001`, local native and container logs, reports,
+  work databases, coverage evidence, and release manifests are retained in the
+  repository's ignored evidence directories. The exception expires when hosted
+  execution can be repeated and artifact IDs and retention dates recorded._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
