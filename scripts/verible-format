@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Counter, reset synchronizer, lane mask, priority encoder, level shifter, isolation cell, and retention register sources use four-space indentation.
+# Counter, reset synchronizer, lane mask, priority encoder, level shifter,
+# isolation cell, retention register, and write gate sources use four-space
+# indentation.
 # Other modules retain Verible's default so existing formatting remains unchanged.
 args=("$@")
 source_file="${args[${#args[@]}-1]}"
 
-if [[ "${source_file}" == *counter*.sv || "${source_file}" == *reset_synchronizer*.sv || "${source_file}" == *lane_mask*.sv || "${source_file}" == *priority_encoder*.sv || "${source_file}" == *level_shifter*.sv || "${source_file}" == *isolation_cell*.sv || "${source_file}" == *retention_register*.sv ]]; then
+if [[ "${source_file}" == *counter*.sv || "${source_file}" == *reset_synchronizer*.sv || "${source_file}" == *lane_mask*.sv || "${source_file}" == *priority_encoder*.sv || "${source_file}" == *level_shifter*.sv || "${source_file}" == *isolation_cell*.sv || "${source_file}" == *retention_register*.sv || "${source_file}" == *write_gate*.sv || "${source_file}" == *write_gate*.svh ]]; then
     args=(--indentation_spaces=4 "${args[@]}")
 fi
 

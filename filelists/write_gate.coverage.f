@@ -1,0 +1,4 @@
+verif/coverage/write_gate_coverage.sv
+verif/coverage/write_gate_transition_coverage.sv
+verif/coverage/write_gate_integration_coverage.sv
+verif/coverage/write_gate_coverage_bind.sv

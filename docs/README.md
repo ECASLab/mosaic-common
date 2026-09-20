@@ -5,6 +5,7 @@
 ## Module documentation
 
 - [Parameterizable D flip-flop](dff/README.md)
+- [Parameterizable write gate](write_gate/README.md)
 
 ## Template documentation
 

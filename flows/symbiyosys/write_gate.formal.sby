@@ -1,0 +1,18 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -D MOSAIC_FORMAL -D MOSAIC_YOSYS_FORMAL -D FORMAL_ASSERTIONS -sv write_gate.sv write_gate_sva.sv write_gate_bind.sv write_gate_integration_formal.sv write_gate_formal.sv
+prep -top write_gate_formal
+
+[files]
+rtl/write_gate.sv
+verif/properties/write_gate_predicates.svh
+verif/assertions/write_gate_sva.sv
+verif/assertions/write_gate_bind.sv
+verif/formal/write_gate_integration_formal.sv
+verif/formal/write_gate_formal.sv

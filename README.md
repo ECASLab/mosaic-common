@@ -18,6 +18,7 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | `level_shifter` | Technology-independent model of a unidirectional voltage-domain crossing | [`docs/level_shifter/`](docs/level_shifter/) |
 | `isolation_cell` | Parameterizable power-domain isolation and compile-time clamp behavior | [`docs/isolation_cell/`](docs/isolation_cell/) |
 | `retention_register` | Parameterizable visible state with explicit save and restore behavior | [`docs/retention_register/`](docs/retention_register/) |
+| `write_gate` | Parameterizable architectural suppression of per-bit write enables | [`docs/write_gate/`](docs/write_gate/) |
 
 The authoritative module list used by local automation and the GitHub Actions
 matrix is [`config/modules.json`](config/modules.json). Parameterized modules
