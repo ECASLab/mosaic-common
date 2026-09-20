@@ -1,0 +1,17 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -D MOSAIC_FORMAL -D MOSAIC_YOSYS_FORMAL -D FORMAL_ASSERTIONS -sv operand_isolation.sv operand_isolation_sva.sv operand_isolation_bind.sv operand_isolation_formal.sv
+prep -top operand_isolation_formal
+
+[files]
+rtl/operand_isolation.sv
+verif/properties/operand_isolation_predicates.svh
+verif/assertions/operand_isolation_sva.sv
+verif/assertions/operand_isolation_bind.sv
+verif/formal/operand_isolation_formal.sv

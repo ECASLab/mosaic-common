@@ -1,0 +1,15 @@
+# Baseline always-on domain for the architectural operand-isolation leaf.
+set_design_top operand_isolation
+create_power_domain PD_OPERAND_ISOLATION -include_scope
+create_supply_port VDD -domain PD_OPERAND_ISOLATION
+create_supply_port VSS -domain PD_OPERAND_ISOLATION
+create_supply_net VDD -domain PD_OPERAND_ISOLATION
+create_supply_net VSS -domain PD_OPERAND_ISOLATION
+connect_supply_net VDD -ports VDD
+connect_supply_net VSS -ports VSS
+set_domain_supply_net PD_OPERAND_ISOLATION \
+    -primary_power_net VDD \
+    -primary_ground_net VSS
+
+# This architectural clamp must not be credited as UPF isolation. Physical
+# domain crossings and their strategies belong to the consuming hierarchy.
