@@ -1,0 +1,31 @@
+{
+    "schema": "mosaic-coverage-policy-v1",
+    "scope": {
+        "include": [
+            "rtl/decoder.sv",
+            "verif/coverage/decoder_coverage.sv",
+            "verif/coverage/decoder_transition_coverage.sv"
+        ],
+        "exclude": []
+    },
+    "thresholds": {
+        "line": 95,
+        "branch": 90,
+        "toggle": 90,
+        "user": 100
+    },
+    "coverpoints": [
+        {"name": "disabled_operation", "minimum_hits": 1},
+        {"name": "enabled_legal", "minimum_hits": 1},
+        {"name": "first_selection", "minimum_hits": 1},
+        {"name": "last_selection", "minimum_hits": 1},
+        {"name": "any_output_selected", "minimum_hits": 1},
+        {"name": "enable_asserted", "minimum_hits": 1},
+        {"name": "enable_deasserted", "minimum_hits": 1},
+        {"name": "legal_selection_changed", "minimum_hits": 1},
+        {"name": "legal_to_invalid", "minimum_hits": 1},
+        {"name": "invalid_to_legal", "minimum_hits": 1}
+    ],
+    "exclusions": [],
+    "formal": {"required": true}
+}

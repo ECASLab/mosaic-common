@@ -7,6 +7,7 @@
 - [Parameterizable D flip-flop](dff/README.md)
 - [Parameterizable write gate](write_gate/README.md)
 - [Parameterizable operand isolation](operand_isolation/README.md)
+- [Parameterizable decoder](decoder/README.md)
 
 ## Template documentation
 
