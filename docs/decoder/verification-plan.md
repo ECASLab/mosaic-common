@@ -86,10 +86,10 @@ The paired monitor case proves that verification detects the unknown control.
 
 ## Exit criteria
 
-- [ ] All eight profiles pass their declared portable flow matrix.
-- [ ] Negative and four-state campaigns pass.
-- [ ] Assertions execute without unexpected failures.
-- [ ] Formal proof and RTL-to-netlist equivalence pass.
-- [ ] Coverage goals are met or narrowly reviewed.
-- [ ] Static timing and power intent validation passes.
-- [ ] The release checklist is complete.
+- [x] All eight profiles pass their declared portable flow matrix.
+- [x] Negative and four-state campaigns pass.
+- [x] Assertions execute without unexpected failures.
+- [x] Formal proof and RTL-to-netlist equivalence pass.
+- [x] Coverage goals are met or narrowly reviewed.
+- [x] Static timing and power intent validation passes.
+- [x] The release checklist is complete under reviewed exception `DEC-CI-001`.

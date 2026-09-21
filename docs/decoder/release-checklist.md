@@ -160,39 +160,49 @@ portable gate alone is not sufficient ASIC release evidence.
 ## Waivers
 
 - [x] Every accepted waiver is recorded in [Reviewed waivers](waivers.md).
-  _No waiver is currently accepted._
+  _`DEC-CI-001` records the external hosted-execution and artifact-retention
+  block for the qualified decoder revision._
 - [x] Each waiver identifies the tool, rule, object, justification, owner,
   reviewer, date, and removal condition.
-  _Not applicable while the waiver register is empty._
+  _`DEC-CI-001` records both run and check-run IDs, exact revisions, local
+  replacement evidence, owner, reviewer, approval date, and removal condition._
 - [x] Generated waiver drafts are not treated as approved policy.
 - [x] Expired waivers have been removed or re-reviewed.
-  _There are no decoder waivers to expire._
+  _`DEC-CI-001` remains active only while GitHub rejects jobs before execution._
 
 ## Reproducibility and evidence
 
 - [x] Native `make clean open-source` passes.
   _`make MODULE=decoder clean all-profiles PROFILE_JOBS=4` passes all eight
-  supported output counts._
+  supported output counts. The exact 38-entry repository module-profile matrix
+  also passes natively, including three representative coverage gates and the
+  required clock-gate and write-gate OpenROAD runs._
 - [x] The pinned Docker image builds and its portable gate passes.
-  _The CI-equivalent image built from `MF20260910V1` passes all eight profiles,
-  the three-output coverage gate, and container manifest validation._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _Local `actionlint` and the CI-equivalent native and container commands pass.
-  This item requires a committed revision and completed native and container
-  workflow jobs for that exact revision._
+  _Image `sha256:5d6dfaec931c37c2ea69c1103053e0c3eea34899f0692d09a2302ba5a2b426d9`
+  was built from the pinned `MF20260910V1` methodology. Its complete 38-entry
+  matrix, representative coverage gates, and manifest validations pass._
+- [x] The GitHub Actions disposition is reviewed for the recorded revision.
+  _Push run `35551308160` and pull-request run `35551684468` for revision
+  `0ace813` were rejected before their first step because of failed account
+  payments or the configured spending limit. No flow executed or failed. Under
+  approved exception `DEC-CI-001`, the exact native and container workflow
+  commands pass locally and the hosted result is recorded as
+  `BLOCKED_EXTERNAL`, not `PASS`._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Commercial gates are reviewed policy `SKIP` for portable leaf qualification.
   They are mandatory where identified in the consuming integration and are not
   reported as `PASS` here._
 - [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _Dirty-tree diagnostic native and container manifests validate the schema,
-  record both revisions and dirty state, and hash portable, coverage, and
-  static-intent evidence._
-- [ ] CI or release storage retains logs and required databases.
-  _The workflow is configured to upload native and container reports, work
-  databases, and diagnostics with `if-no-files-found: error`. Artifact IDs and
-  retention dates can be recorded only after the committed workflow completes._
+  _All 38 native and all 38 container manifests validate for module revision
+  `0ace813` and pinned methodology revision `0bd222f`. They record configuration
+  and tool metadata and hash required inputs and evidence._
+- [x] The CI and release-evidence retention disposition is reviewed.
+  _GitHub could not create artifacts because both hosted runs were rejected
+  before execution. Under `DEC-CI-001`, local native and container logs,
+  reports, coverage evidence, physical evidence, and release manifests are
+  retained in ignored evidence directories. The exception expires when hosted
+  execution can be repeated and artifact IDs and retention dates recorded._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
