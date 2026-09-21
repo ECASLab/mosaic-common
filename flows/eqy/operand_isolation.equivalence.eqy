@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/operand_isolation.sv
+prep -top operand_isolation
+
+[gate]
+read_verilog work/operand_isolation/yosys_synthesis/operand_isolation_netlist.v
+prep -top operand_isolation
+
+[strategy sat]
+use sat
+depth 1

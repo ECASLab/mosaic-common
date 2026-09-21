@@ -1,0 +1,49 @@
+{
+    "schema": "mosaic-coverage-policy-v1",
+    "scope": {
+        "include": [
+            "rtl/operand_isolation.sv",
+            "verif/coverage/operand_isolation_coverage.sv",
+            "verif/coverage/operand_isolation_transition_coverage.sv",
+            "verif/coverage/operand_isolation_integration_coverage.sv"
+        ],
+        "exclude": []
+    },
+    "thresholds": {
+        "line": 95,
+        "branch": 80,
+        "toggle": 90,
+        "user": 100
+    },
+    "coverpoints": [
+        {"name": "transparent_mode", "minimum_hits": 1},
+        {"name": "isolation_mode", "minimum_hits": 1},
+        {"name": "transparent_zero", "minimum_hits": 1},
+        {"name": "transparent_ones", "minimum_hits": 1},
+        {"name": "isolated_input_differs", "minimum_hits": 1},
+        {"name": "isolated_input_matches", "minimum_hits": 1},
+        {"name": "isolation_assert_data_stable", "minimum_hits": 1},
+        {"name": "isolation_assert_data_changes", "minimum_hits": 1},
+        {"name": "isolation_deassert_data_stable", "minimum_hits": 1},
+        {"name": "isolation_deassert_data_changes", "minimum_hits": 1},
+        {"name": "isolated_input_changes", "minimum_hits": 1},
+        {"name": "transparent_input_changes", "minimum_hits": 1},
+        {"name": "back_to_back_isolation", "minimum_hits": 1},
+        {"name": "arithmetic_active", "minimum_hits": 1},
+        {"name": "arithmetic_isolated", "minimum_hits": 1},
+        {"name": "vector_active", "minimum_hits": 1},
+        {"name": "vector_isolated", "minimum_hits": 1},
+        {"name": "address_generation_active", "minimum_hits": 1},
+        {"name": "address_generation_isolated", "minimum_hits": 1}
+    ],
+    "exclusions": [
+        {
+            "source": "rtl/operand_isolation.sv",
+            "metric": "line",
+            "reason": "The default arm implements X/Z control propagation and cannot execute in Verilator's binary simulation. Dedicated Icarus X/Z campaigns qualify the arm.",
+            "owner": "module-maintainers",
+            "scope": {"line_start": 27}
+        }
+    ],
+    "formal": {"required": true}
+}

@@ -1,0 +1,4 @@
+verif/coverage/operand_isolation_coverage.sv
+verif/coverage/operand_isolation_transition_coverage.sv
+verif/coverage/operand_isolation_integration_coverage.sv
+verif/coverage/operand_isolation_coverage_bind.sv

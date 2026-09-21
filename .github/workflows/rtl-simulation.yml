@@ -154,13 +154,15 @@ jobs:
           cp "${openroad_dir}/status.txt" "${openroad_dir}/forced-status.txt"
           printf 'SKIP\n' > "${openroad_dir}/status.txt"
 
-      - name: Qualify write-gate functional and structural coverage
-        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+      - name: Qualify representative functional and structural coverage
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern')
         run: |
           set -o pipefail
-          make MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 open-coverage \
-            2>&1 | tee ci-artifacts/native-write-gate-coverage.log
-          coverage_dir=reports/write_gate/width_2/coverage_qualification
+          module="${{ matrix.module }}"
+          profile="${{ matrix.profile }}"
+          make MODULE="${module}" PROFILE="${profile}" FORCE_FLOW=1 open-coverage \
+            2>&1 | tee "ci-artifacts/native-${module}-coverage.log"
+          coverage_dir="reports/${module}/${profile}/coverage_qualification"
           cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
           printf 'SKIP\n' > "${coverage_dir}/status.txt"
 
@@ -172,6 +174,8 @@ jobs:
           set -o pipefail
           if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
             export RELEASE_ADDITIONAL_EVIDENCE="reports/write_gate/width_2/coverage_qualification/forced-status.txt reports/write_gate/width_2/openroad/evidence.json reports/write_gate/width_2/openroad/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == operand_isolation && "${{ matrix.profile }}" == width_16_pattern ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
           fi
           make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" release-manifest release-manifest-validate 2>&1 | tee ci-artifacts/native-release-manifest.log
 
@@ -273,17 +277,19 @@ jobs:
             "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled clean open-source \
             2>&1 | tee ci-artifacts/container-flow.log
 
-      - name: Qualify write-gate functional and structural coverage in container
-        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+      - name: Qualify representative functional and structural coverage in container
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern')
         run: |
           set -o pipefail
+          module="${{ matrix.module }}"
+          profile="${{ matrix.profile }}"
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 open-coverage \
-            2>&1 | tee ci-artifacts/container-write-gate-coverage.log
-          coverage_dir=reports/write_gate/width_2/coverage_qualification
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${module}" PROFILE="${profile}" FORCE_FLOW=1 open-coverage \
+            2>&1 | tee "ci-artifacts/container-${module}-coverage.log"
+          coverage_dir="reports/${module}/${profile}/coverage_qualification"
           cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
           printf 'SKIP\n' > "${coverage_dir}/status.txt"
 
@@ -293,6 +299,8 @@ jobs:
           additional_evidence=""
           if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
             additional_evidence="reports/write_gate/width_2/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == operand_isolation && "${{ matrix.profile }}" == width_16_pattern ]]; then
+            additional_evidence="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
           fi
           docker run --rm \
             --user "$(id -u):$(id -g)" \

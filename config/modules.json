@@ -10,6 +10,7 @@
         {"name": "level_shifter"},
         {"name": "isolation_cell"},
         {"name": "retention_register"},
-        {"name": "write_gate"}
+        {"name": "write_gate"},
+        {"name": "operand_isolation"}
     ]
 }
