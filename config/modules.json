@@ -11,6 +11,7 @@
         {"name": "isolation_cell"},
         {"name": "retention_register"},
         {"name": "write_gate"},
-        {"name": "operand_isolation"}
+        {"name": "operand_isolation"},
+        {"name": "decoder"}
     ]
 }

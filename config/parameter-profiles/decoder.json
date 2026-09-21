@@ -1,0 +1,53 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {
+            "name": "outputs_1",
+            "parameters": {"NUM_OUTPUTS": 1},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "negative_qualification", "four_state_qualification", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_2",
+            "parameters": {"NUM_OUTPUTS": 2},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_3",
+            "parameters": {"NUM_OUTPUTS": 3},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_4",
+            "parameters": {"NUM_OUTPUTS": 4},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_5",
+            "parameters": {"NUM_OUTPUTS": 5},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_8",
+            "parameters": {"NUM_OUTPUTS": 8},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_16",
+            "parameters": {"NUM_OUTPUTS": 16},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        },
+        {
+            "name": "outputs_32",
+            "parameters": {"NUM_OUTPUTS": 32},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "decoder", "testbench": "decoder_tb", "formal": "decoder_formal"}
+        }
+    ]
+}

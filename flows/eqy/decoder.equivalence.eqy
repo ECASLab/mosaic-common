@@ -1,0 +1,14 @@
+[gold]
+read_verilog -sv rtl/decoder.sv
+prep -top decoder
+
+[gate]
+read_verilog work/decoder/yosys_synthesis/decoder_netlist.v
+prep -top decoder
+
+[collect decoder]
+group o_*
+
+[strategy sat]
+use sat
+depth 1
