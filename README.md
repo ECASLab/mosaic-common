@@ -21,6 +21,7 @@ repository infrastructure and pinned [`mosaic-flow`](mosaic-flow) methodology.
 | `write_gate` | Parameterizable architectural suppression of per-bit write enables | [`docs/write_gate/`](docs/write_gate/) |
 | `operand_isolation` | Parameterizable architectural clamping of inactive datapath operands | [`docs/operand_isolation/`](docs/operand_isolation/) |
 | `decoder` | Parameterizable binary-to-one-hot decoder with validity reporting | [`docs/decoder/`](docs/decoder/) |
+| `mux` | Parameterizable N-to-1 data selector with validity reporting | [`docs/mux/`](docs/mux/) |
 
 The authoritative module list used by local automation and the GitHub Actions
 matrix is [`config/modules.json`](config/modules.json). Parameterized modules

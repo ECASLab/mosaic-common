@@ -155,7 +155,7 @@ jobs:
           printf 'SKIP\n' > "${openroad_dir}/status.txt"
 
       - name: Qualify representative functional and structural coverage
-        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3')
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3') || (matrix.module == 'mux' && matrix.profile == 'inputs_3_width_16')
         run: |
           set -o pipefail
           module="${{ matrix.module }}"
@@ -178,6 +178,8 @@ jobs:
             export RELEASE_ADDITIONAL_EVIDENCE="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
           elif [[ "${{ matrix.module }}" == decoder && "${{ matrix.profile }}" == outputs_3 ]]; then
             export RELEASE_ADDITIONAL_EVIDENCE="reports/decoder/outputs_3/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == mux && "${{ matrix.profile }}" == inputs_3_width_16 ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/mux/inputs_3_width_16/coverage_qualification/forced-status.txt"
           fi
           make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" release-manifest release-manifest-validate 2>&1 | tee ci-artifacts/native-release-manifest.log
 
@@ -280,7 +282,7 @@ jobs:
             2>&1 | tee ci-artifacts/container-flow.log
 
       - name: Qualify representative functional and structural coverage in container
-        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3')
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3') || (matrix.module == 'mux' && matrix.profile == 'inputs_3_width_16')
         run: |
           set -o pipefail
           module="${{ matrix.module }}"
@@ -305,6 +307,8 @@ jobs:
             additional_evidence="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
           elif [[ "${{ matrix.module }}" == decoder && "${{ matrix.profile }}" == outputs_3 ]]; then
             additional_evidence="reports/decoder/outputs_3/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == mux && "${{ matrix.profile }}" == inputs_3_width_16 ]]; then
+            additional_evidence="reports/mux/inputs_3_width_16/coverage_qualification/forced-status.txt"
           fi
           docker run --rm \
             --user "$(id -u):$(id -g)" \
