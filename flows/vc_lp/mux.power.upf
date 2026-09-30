@@ -1,0 +1,9 @@
+set_design_top mux
+create_power_domain PD_MUX -include_scope
+create_supply_port VDD -domain PD_MUX
+create_supply_port VSS -domain PD_MUX
+create_supply_net VDD -domain PD_MUX
+create_supply_net VSS -domain PD_MUX
+connect_supply_net VDD -ports VDD
+connect_supply_net VSS -ports VSS
+set_domain_supply_net PD_MUX -primary_power_net VDD -primary_ground_net VSS

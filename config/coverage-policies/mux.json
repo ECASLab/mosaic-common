@@ -1,0 +1,35 @@
+{
+    "schema": "mosaic-coverage-policy-v1",
+    "scope": {
+        "include": [
+            "rtl/mux.sv",
+            "verif/coverage/mux_coverage.sv",
+            "verif/coverage/mux_transition_coverage.sv"
+        ],
+        "exclude": []
+    },
+    "thresholds": {
+        "line": 95,
+        "branch": 90,
+        "toggle": 90,
+        "user": 100
+    },
+    "coverpoints": [
+        {"name": "legal_selection", "minimum_hits": 1},
+        {"name": "first_selection", "minimum_hits": 1},
+        {"name": "last_selection", "minimum_hits": 1},
+        {"name": "selected_zero", "minimum_hits": 1},
+        {"name": "selected_all_ones", "minimum_hits": 1},
+        {"name": "distinct_input_values", "minimum_hits": 1},
+        {"name": "invalid_selection", "minimum_hits": 1},
+        {"name": "legal_selection_changed", "minimum_hits": 1},
+        {"name": "selected_input_changed", "minimum_hits": 1},
+        {"name": "unselected_input_changed", "minimum_hits": 1},
+        {"name": "legal_to_invalid", "minimum_hits": 1},
+        {"name": "invalid_to_legal", "minimum_hits": 1},
+        {"name": "all_selection_encodings", "minimum_hits": 1},
+        {"name": "all_legal_selection_pairs", "minimum_hits": 1}
+    ],
+    "exclusions": [],
+    "formal": {"required": true}
+}

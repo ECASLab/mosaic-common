@@ -8,6 +8,7 @@
 - [Parameterizable write gate](write_gate/README.md)
 - [Parameterizable operand isolation](operand_isolation/README.md)
 - [Parameterizable decoder](decoder/README.md)
+- [Parameterizable multiplexer](mux/README.md)
 
 ## Template documentation
 
