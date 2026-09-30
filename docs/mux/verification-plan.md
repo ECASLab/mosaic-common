@@ -92,4 +92,4 @@ verification layer detects the unknown selection.
 - [x] Formal proof and RTL-to-netlist equivalence pass.
 - [x] Coverage goals are met or narrowly reviewed.
 - [x] Static timing and power intent validation passes.
-- [ ] The release checklist is complete.
+- [x] The release checklist is complete.

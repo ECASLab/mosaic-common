@@ -174,22 +174,27 @@ gate alone is not sufficient ASIC release evidence.
   was built from pinned methodology revision `0bd222f` (`MF20260910V1`). All
   six mux profiles, representative forced coverage, and the six container
   manifest validations pass with the CI-equivalent commands._
-- [ ] GitHub Actions passes using the recorded gitlink revision.
-  _This requires a committed revision and completed native and container jobs
-  for that exact revision._
+- [x] GitHub Actions passes using the recorded gitlink revision.
+  _Push run `36541363113` and pull-request run `36541367519` each pass all
+  89 jobs for branch revision `8946328` with pinned methodology revision
+  `0bd222f`. The pull request records 178 successful checks._
 - [x] Commercial gates pass in the authorized local or self-hosted environment.
   _Commercial gates are reviewed policy `SKIP` for portable leaf qualification.
   They remain mandatory where identified in consuming integration._
 - [x] Reports identify module revision, methodology revision, tool versions,
   constraints, technology, date, and configuration.
-  _All six native and all six container diagnostic manifests validate. They
-  record base module revision `d907c79`, dirty-tree state, pinned methodology
-  revision `0bd222f`, profile parameters, technology context, input and evidence
-  hashes, generation date, and open-source tool versions. A clean committed
-  revision remains necessary for final GitHub release evidence._
-- [ ] CI or release storage retains logs and required databases.
-  _The workflow uploads native and container reports, work databases, and
-  diagnostics. Artifact IDs and retention dates require a committed run._
+  _All six native and all six container manifests from the successful push run
+  validate for clean module revision `8946328` and methodology revision
+  `0bd222f`. They record profile parameters, technology context, input and
+  evidence hashes, generation date, and open-source tool versions. The
+  pull-request manifests also validate for synthetic merge revision `7e06fc5`._
+- [x] CI or release storage retains logs and required databases.
+  _Each successful run retains 12 mux artifacts through December 28, 2026.
+  Native artifact `11021014669` and container artifact `11021033913` are the
+  representative `inputs_3_width_16` evidence from push run `36541363113`.
+  The native artifacts include reports, diagnostics, and work databases. The
+  container artifacts include reports, diagnostics, coverage, and validated
+  release manifests. The run pages record all artifact IDs._
 - [x] No generated work database, credential, license, or proprietary library is
   committed to Git.
 
