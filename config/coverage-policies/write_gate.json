@@ -1,0 +1,54 @@
+{
+    "schema": "mosaic-coverage-policy-v1",
+    "scope": {
+        "include": [
+            "rtl/write_gate.sv",
+            "verif/coverage/write_gate_coverage.sv",
+            "verif/coverage/write_gate_transition_coverage.sv",
+            "verif/coverage/write_gate_integration_coverage.sv"
+        ],
+        "exclude": []
+    },
+    "thresholds": {
+        "line": 100,
+        "branch": 100,
+        "toggle": 90,
+        "user": 100
+    },
+    "coverpoints": [
+        {"name": "truth_00", "minimum_hits": 1},
+        {"name": "truth_01", "minimum_hits": 1},
+        {"name": "truth_10", "minimum_hits": 1},
+        {"name": "truth_11", "minimum_hits": 1},
+        {"name": "every_bit_permitted", "minimum_hits": 1},
+        {"name": "every_bit_suppressed", "minimum_hits": 1},
+        {"name": "zero_suppression_ratio", "minimum_hits": 1},
+        {"name": "partial_suppression_ratio", "minimum_hits": 1},
+        {"name": "complete_suppression_ratio", "minimum_hits": 1},
+        {"name": "partition_observed", "minimum_hits": 1},
+        {"name": "mixed_write_decision", "minimum_hits": 1},
+        {"name": "transition_00_00", "minimum_hits": 1},
+        {"name": "transition_00_01", "minimum_hits": 1},
+        {"name": "transition_00_10", "minimum_hits": 1},
+        {"name": "transition_00_11", "minimum_hits": 1},
+        {"name": "transition_01_00", "minimum_hits": 1},
+        {"name": "transition_01_01", "minimum_hits": 1},
+        {"name": "transition_01_10", "minimum_hits": 1},
+        {"name": "transition_01_11", "minimum_hits": 1},
+        {"name": "transition_10_00", "minimum_hits": 1},
+        {"name": "transition_10_01", "minimum_hits": 1},
+        {"name": "transition_10_10", "minimum_hits": 1},
+        {"name": "transition_10_11", "minimum_hits": 1},
+        {"name": "transition_11_00", "minimum_hits": 1},
+        {"name": "transition_11_01", "minimum_hits": 1},
+        {"name": "transition_11_10", "minimum_hits": 1},
+        {"name": "transition_11_11", "minimum_hits": 1},
+        {"name": "protocol_idle_no_decision", "minimum_hits": 1},
+        {"name": "protocol_accepted_permit", "minimum_hits": 1},
+        {"name": "protocol_accepted_suppress", "minimum_hits": 1},
+        {"name": "register_redundant_suppression", "minimum_hits": 1},
+        {"name": "memory_redundant_suppression", "minimum_hits": 1}
+    ],
+    "exclusions": [],
+    "formal": {"required": true}
+}

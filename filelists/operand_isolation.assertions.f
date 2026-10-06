@@ -1,0 +1,2 @@
+verif/assertions/operand_isolation_sva.sv
+verif/assertions/operand_isolation_bind.sv

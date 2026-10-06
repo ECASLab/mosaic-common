@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv priority_encoder.sv priority_encoder_formal.sv
+prep -top priority_encoder_formal
+
+[files]
+rtl/priority_encoder.sv
+verif/formal/priority_encoder_formal.sv

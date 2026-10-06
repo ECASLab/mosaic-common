@@ -12,10 +12,49 @@ env:
   FLOW_ROOT: ${{ github.workspace }}/mosaic-flow
 
 jobs:
+  module-matrix:
+    name: Read module-profile matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.modules.outputs.matrix }}
+      flow_revision: ${{ steps.flow-revision.outputs.revision }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Read pinned mosaic-flow submodule revision
+        id: flow-revision
+        run: |
+          revision="$(git ls-files --stage mosaic-flow | awk '$1 == "160000" {print $2}')"
+          [[ "${revision}" =~ ^[0-9a-f]{40}$ ]]
+          echo "revision=${revision}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out pinned mosaic-flow
+        uses: actions/checkout@v7
+        with:
+          repository: ECASLab/mosaic-flow
+          ref: ${{ steps.flow-revision.outputs.revision }}
+          path: mosaic-flow
+          persist-credentials: false
+
+      - name: Verify mosaic-flow checkout
+        run: test "$(git -C mosaic-flow rev-parse HEAD)" = "${{ steps.flow-revision.outputs.revision }}"
+
+      - name: Generate validated module-profile matrix
+        id: modules
+        run: |
+          make module-manifest-check
+          matrix="$(make module-profile-matrix)"
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+
   rtl-checks:
-    name: Open-source RTL checks
+    name: ${{ matrix.job_name }} native checks
+    needs: module-matrix
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.module-matrix.outputs.matrix) }}
 
     steps:
       - name: Check out module repository
@@ -61,28 +100,29 @@ jobs:
           fi
 
       - name: Validate project flow selection
-        run: make flow-config-check
+        run: make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" flow-config-check
 
       - name: Cache open-source tools
         uses: actions/cache@v5
         with:
           path: ~/.cache/mosaic
-          key: mosaic-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mosaic-flow/config/tool-versions.env') }}
+          key: mosaic-tools-${{ runner.os }}-${{ runner.arch }}-${{ needs.module-matrix.outputs.flow_revision }}-${{ matrix.module }}-${{ matrix.profile }}
 
       - name: Set up pinned open-source tools
-        run: make setup-open-source
+        run: make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" setup-open-source
 
       - name: Export pinned open-source tool paths
         run: |
           # shellcheck disable=SC2016
           make --no-print-directory --silent \
+            MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" \
             --eval='mosaic-export-tool-paths: ; @printf "%s\n" "$(VERIBLE_ROOT)/bin" "$(SLANG_ROOT)/bin" "$(OSS_CAD_SUITE_ROOT)/bin"' \
             mosaic-export-tool-paths >> "${GITHUB_PATH}"
 
       - name: Record tool versions
         run: |
           set -o pipefail
-          mkdir -p reports/tool_versions
+          mkdir -p "reports/${{ matrix.module }}/${{ matrix.profile }}/tool_versions"
           {
             verilator --version
             yosys --version
@@ -90,27 +130,78 @@ jobs:
             eqy --version
             verible-verilog-lint --version
             slang --version
-          } | tee reports/tool_versions/versions.log
+          } | tee "reports/${{ matrix.module }}/${{ matrix.profile }}/tool_versions/versions.log"
 
       - name: Run portable open-source RTL flow
         run: |
           set -o pipefail
-          make open-source 2>&1 | tee ci-artifacts/native-flow.log
+          make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" clean open-source 2>&1 | tee ci-artifacts/native-flow.log
+
+      - name: Run clock-gate OpenROAD physical flow
+        if: matrix.module == 'clock_gate'
+        run: |
+          set -o pipefail
+          make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" OPENROAD_EXECUTION_MODE=container open-physical 2>&1 | tee ci-artifacts/native-openroad.log
+
+      - name: Run representative write-gate OpenROAD physical flow
+        if: matrix.module == 'write_gate' && matrix.profile == 'width_2'
+        run: |
+          set -o pipefail
+          make MODULE=write_gate PROFILE=width_2 FORCE_FLOW=1 \
+            OPENROAD_EXECUTION_MODE=container open-physical \
+            2>&1 | tee ci-artifacts/native-write-gate-openroad.log
+          openroad_dir=reports/write_gate/width_2/openroad
+          cp "${openroad_dir}/status.txt" "${openroad_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${openroad_dir}/status.txt"
+
+      - name: Qualify representative functional and structural coverage
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3') || (matrix.module == 'mux' && matrix.profile == 'inputs_3_width_16')
+        run: |
+          set -o pipefail
+          module="${{ matrix.module }}"
+          profile="${{ matrix.profile }}"
+          make MODULE="${module}" PROFILE="${profile}" FORCE_FLOW=1 open-coverage \
+            2>&1 | tee "ci-artifacts/native-${module}-coverage.log"
+          coverage_dir="reports/${module}/${profile}/coverage_qualification"
+          cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${coverage_dir}/status.txt"
+
+      - name: Generate release evidence manifest
+        env:
+          MODULE_REVISION: ${{ github.sha }}
+          METHODOLOGY_REVISION: ${{ steps.flow-revision.outputs.revision }}
+        run: |
+          set -o pipefail
+          if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/write_gate/width_2/coverage_qualification/forced-status.txt reports/write_gate/width_2/openroad/evidence.json reports/write_gate/width_2/openroad/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == operand_isolation && "${{ matrix.profile }}" == width_16_pattern ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == decoder && "${{ matrix.profile }}" == outputs_3 ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/decoder/outputs_3/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == mux && "${{ matrix.profile }}" == inputs_3_width_16 ]]; then
+            export RELEASE_ADDITIONAL_EVIDENCE="reports/mux/inputs_3_width_16/coverage_qualification/forced-status.txt"
+          fi
+          make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" release-manifest release-manifest-validate 2>&1 | tee ci-artifacts/native-release-manifest.log
 
       - name: Upload RTL reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: open-source-rtl-reports
+          name: ${{ matrix.job_name }}-native-reports
           path: |
-            reports/
+            reports/${{ matrix.module }}/
+            work/${{ matrix.module }}/
             ci-artifacts/
           if-no-files-found: error
 
   container-checks:
-    name: Containerized open-source RTL checks
+    name: ${{ matrix.job_name }} container checks
+    needs: module-matrix
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.module-matrix.outputs.matrix) }}
 
     steps:
       - name: Check out module repository
@@ -130,7 +221,7 @@ jobs:
       - name: Read pinned mosaic-flow submodule revision
         id: flow-revision
         run: |
-          revision="$(git ls-files --stage mosaic-flow | awk '$1 == "160000" {print $2}')"
+          revision="${{ needs.module-matrix.outputs.flow_revision }}"
           if [[ ! "${revision}" =~ ^[0-9a-f]{40}$ ]]; then
             echo "mosaic-flow must be a pinned Git submodule" >&2
             exit 1
@@ -156,7 +247,7 @@ jobs:
           fi
 
       - name: Validate project flow selection
-        run: make flow-config-check
+        run: make MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" flow-config-check
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -169,12 +260,12 @@ jobs:
             mosaic-flow=./mosaic-flow
           build-args: |
             MOSAIC_FLOW_REVISION=${{ steps.flow-revision.outputs.revision }}
-          cache-from: type=gha,scope=mosaic-module-ci
-          cache-to: type=gha,mode=max,scope=mosaic-module-ci
+          cache-from: type=gha,scope=mosaic-module-ci-${{ matrix.module }}-${{ matrix.profile }}
+          cache-to: type=gha,mode=max,scope=mosaic-module-ci-${{ matrix.module }}-${{ matrix.profile }}
           load: true
           platforms: linux/amd64
           push: false
-          tags: mosaic-module-ci:${{ github.sha }}
+          tags: mosaic-module-ci:${{ github.sha }}-${{ matrix.module }}-${{ matrix.profile }}
 
       - name: Run portable flow in container
         run: |
@@ -182,16 +273,61 @@ jobs:
           docker run --rm \
             --user "$(id -u):$(id -g)" \
             --env HOME=/tmp \
+            --env MODULE_REVISION="${GITHUB_SHA}" \
+            --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
+            --env RELEASE_METHODOLOGY_DIRTY=false \
+            --env RELEASE_EXECUTION_CONTEXT=container \
             --volume "${GITHUB_WORKSPACE}:/workspace" \
-            "mosaic-module-ci:${GITHUB_SHA}" clean open-source \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled clean open-source \
             2>&1 | tee ci-artifacts/container-flow.log
+
+      - name: Qualify representative functional and structural coverage in container
+        if: (matrix.module == 'write_gate' && matrix.profile == 'width_2') || (matrix.module == 'operand_isolation' && matrix.profile == 'width_16_pattern') || (matrix.module == 'decoder' && matrix.profile == 'outputs_3') || (matrix.module == 'mux' && matrix.profile == 'inputs_3_width_16')
+        run: |
+          set -o pipefail
+          module="${{ matrix.module }}"
+          profile="${{ matrix.profile }}"
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${module}" PROFILE="${profile}" FORCE_FLOW=1 open-coverage \
+            2>&1 | tee "ci-artifacts/container-${module}-coverage.log"
+          coverage_dir="reports/${module}/${profile}/coverage_qualification"
+          cp "${coverage_dir}/status.txt" "${coverage_dir}/forced-status.txt"
+          printf 'SKIP\n' > "${coverage_dir}/status.txt"
+
+      - name: Generate release evidence manifest in container
+        run: |
+          set -o pipefail
+          additional_evidence=""
+          if [[ "${{ matrix.module }}" == write_gate && "${{ matrix.profile }}" == width_2 ]]; then
+            additional_evidence="reports/write_gate/width_2/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == operand_isolation && "${{ matrix.profile }}" == width_16_pattern ]]; then
+            additional_evidence="reports/operand_isolation/width_16_pattern/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == decoder && "${{ matrix.profile }}" == outputs_3 ]]; then
+            additional_evidence="reports/decoder/outputs_3/coverage_qualification/forced-status.txt"
+          elif [[ "${{ matrix.module }}" == mux && "${{ matrix.profile }}" == inputs_3_width_16 ]]; then
+            additional_evidence="reports/mux/inputs_3_width_16/coverage_qualification/forced-status.txt"
+          fi
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            --env HOME=/tmp \
+            --env MODULE_REVISION="${GITHUB_SHA}" \
+            --env METHODOLOGY_REVISION="${{ steps.flow-revision.outputs.revision }}" \
+            --env RELEASE_ADDITIONAL_EVIDENCE="${additional_evidence}" \
+            --env RELEASE_METHODOLOGY_DIRTY=false \
+            --env RELEASE_EXECUTION_CONTEXT=container \
+            --volume "${GITHUB_WORKSPACE}:/workspace" \
+            "mosaic-module-ci:${GITHUB_SHA}-${{ matrix.module }}-${{ matrix.profile }}" MODULE="${{ matrix.module }}" PROFILE="${{ matrix.profile }}" FLOW_openroad=disabled release-manifest release-manifest-validate \
+            2>&1 | tee ci-artifacts/container-release-manifest.log
 
       - name: Upload container RTL reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: container-open-source-rtl-reports
+          name: ${{ matrix.job_name }}-container-reports
           path: |
-            reports/
+            reports/${{ matrix.module }}/
             ci-artifacts/
           if-no-files-found: error

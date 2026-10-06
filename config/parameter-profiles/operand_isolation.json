@@ -1,0 +1,47 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {
+            "name": "width_1_zero",
+            "parameters": {"WIDTH": 1, "CLAMP_VALUE": "1'b0"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "negative_qualification", "four_state_qualification", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_8_ones",
+            "parameters": {"WIDTH": 8, "CLAMP_VALUE": "8'hff"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_16_pattern",
+            "parameters": {"WIDTH": 16, "CLAMP_VALUE": "16'ha55a"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_32_zero",
+            "parameters": {"WIDTH": 32, "CLAMP_VALUE": "32'h00000000"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_64_ones",
+            "parameters": {"WIDTH": 64, "CLAMP_VALUE": "64'hffffffffffffffff"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_128_pattern",
+            "parameters": {"WIDTH": 128, "CLAMP_VALUE": "128'ha5a55a5af0f00f0fa5a55a5af0f00f0f"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        },
+        {
+            "name": "width_256_pattern",
+            "parameters": {"WIDTH": 256, "CLAMP_VALUE": "256'ha5a55a5af0f00f0fa5a55a5af0f00f0f5a5aa5a50f0ff0f05a5aa5a50f0ff0f0"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "operand_isolation", "testbench": "operand_isolation_tb", "formal": "operand_isolation_formal"}
+        }
+    ]
+}

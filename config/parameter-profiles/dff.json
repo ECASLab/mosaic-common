@@ -1,0 +1,23 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {
+            "name": "scalar_sync_enable",
+            "parameters": {"WIDTH": 1, "RESET_VALUE": 0, "ASYNC_RESET": false, "HAS_ENABLE": true},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "dff", "testbench": "dff_profile_tb", "formal": "dff_profile_formal"}
+        },
+        {
+            "name": "vector_async_enable",
+            "parameters": {"WIDTH": 32, "RESET_VALUE": "32'h5A5A_A5A5", "ASYNC_RESET": true, "HAS_ENABLE": true},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "dff", "testbench": "dff_profile_tb", "formal": "dff_profile_formal"}
+        },
+        {
+            "name": "vector_sync_no_enable",
+            "parameters": {"WIDTH": 128, "RESET_VALUE": 0, "ASYNC_RESET": false, "HAS_ENABLE": false},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "dff", "testbench": "dff_profile_tb", "formal": "dff_profile_formal"}
+        }
+    ]
+}

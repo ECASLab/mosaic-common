@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/write_gate.sv
+prep -top write_gate
+
+[gate]
+read_verilog work/write_gate/yosys_synthesis/write_gate_netlist.v
+prep -top write_gate
+
+[strategy sat]
+use sat
+depth 1

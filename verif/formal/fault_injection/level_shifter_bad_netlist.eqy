@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/level_shifter.sv
+prep -top level_shifter
+
+[gate]
+read_verilog verif/formal/fault_injection/level_shifter_bad_netlist.v
+prep -top level_shifter
+
+[strategy sat]
+use sat
+depth 1

@@ -1,28 +1,21 @@
-export DESIGN_TOP := mosaic_module
-export TB_TOP := $(DESIGN_TOP)_tb
-export FORMAL_TOP := $(DESIGN_TOP)_formal
-export DUT_INSTANCE := $(TB_TOP)/dut
-export FLOW_CONFIG_ROOT := $(MODULE_ROOT)/flows
-export RTL_FILELIST := $(MODULE_ROOT)/filelists/rtl.f
-export TB_FILELIST := $(MODULE_ROOT)/filelists/tb.f
-export VERILATOR_WAIVER_FILE := $(FLOW_CONFIG_ROOT)/verilator_lint/waivers.vlt
-export VERIBLE_WAIVER_FILE := $(FLOW_CONFIG_ROOT)/verible/waivers.txt
-export VERIBLE_RULES_FILE := $(FLOW_CONFIG_ROOT)/verible/rules
-export FORMAL_CONFIG := $(FLOW_CONFIG_ROOT)/symbiyosys/formal.sby
-export EQUIVALENCE_CONFIG := $(FLOW_CONFIG_ROOT)/eqy/equivalence.eqy
-export OPENROAD_CONFIG := $(FLOW_CONFIG_ROOT)/openroad/config.mk
-export SYNTHESIS_CONSTRAINT_FILE := $(FLOW_CONFIG_ROOT)/synthesis/timing.sdc
-export CDC_CONFIG := $(FLOW_CONFIG_ROOT)/cdc/constraints.tcl
-export DFT_CONFIG := $(FLOW_CONFIG_ROOT)/sg_dft/constraints.tcl
-export UPF_CONFIG := $(FLOW_CONFIG_ROOT)/vc_lp/power.upf
-export CONSTRAINT_DIR := $(FLOW_CONFIG_ROOT)/synthesis
-export REPORT_DIR := $(MODULE_ROOT)/reports
-export WORK_DIR := $(MODULE_ROOT)/work
-export OPENROAD_PLATFORM ?= nangate45
+# Select one lightweight module profile while keeping source trees at repo root.
+MODULE_DESIGN_CONFIG := $(MODULE_ROOT)/config/modules/$(MODULE).mk
 
-# Override in CI or a site-local, untracked environment file.
-export TECH_SETUP_TCL ?=
-export TARGET_LIBRARY ?=
-export LINK_LIBRARY ?=
-export OPERATING_CONDITION ?=
-export ACTIVITY_FILE ?=$(WORK_DIR)/vcs_sim/$(DESIGN_TOP).saif
+# Prefer module-specific flow collateral and fall back to the repository-wide
+# default. Example: counter.formal.sby takes precedence over formal.sby.
+resolve_flow_config = $(or $(wildcard $(MODULE_ROOT)/flows/$(1)/$(DESIGN_TOP).$(2)),$(MODULE_ROOT)/flows/$(1)/$(2))
+
+# Apply the same module-first convention to source file lists. Example:
+# counter.rtl.f takes precedence over the generic rtl.f.
+resolve_filelist = $(or $(wildcard $(MODULE_ROOT)/filelists/$(DESIGN_TOP).$(1)),$(MODULE_ROOT)/filelists/$(1))
+
+# Keep module-specific indentation reproducible while the shared Verible adapter
+# checks every SystemVerilog source in the repository.
+export VERIBLE_FORMAT_CMD := $(MODULE_ROOT)/scripts/verible-format
+
+ifeq ($(wildcard $(MODULE_DESIGN_CONFIG)),)
+$(error Unknown MODULE '$(MODULE)'; expected $(MODULE_DESIGN_CONFIG))
+endif
+
+# The selected profile owns tops, file lists, tool inputs, and output locations.
+include $(MODULE_DESIGN_CONFIG)

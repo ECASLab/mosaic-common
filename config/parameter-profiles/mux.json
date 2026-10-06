@@ -1,0 +1,41 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {
+            "name": "inputs_1_width_1",
+            "parameters": {"NUM_INPUTS": 1, "DATA_WIDTH": 1, "DEFAULT_VALUE": "1'b1"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "negative_qualification", "four_state_qualification", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        },
+        {
+            "name": "inputs_2_width_8",
+            "parameters": {"NUM_INPUTS": 2, "DATA_WIDTH": 8, "DEFAULT_VALUE": "8'ha5"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        },
+        {
+            "name": "inputs_3_width_16",
+            "parameters": {"NUM_INPUTS": 3, "DATA_WIDTH": 16, "DEFAULT_VALUE": "16'hbeef"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        },
+        {
+            "name": "inputs_4_width_32",
+            "parameters": {"NUM_INPUTS": 4, "DATA_WIDTH": 32, "DEFAULT_VALUE": "32'h00000000"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        },
+        {
+            "name": "inputs_5_width_64",
+            "parameters": {"NUM_INPUTS": 5, "DATA_WIDTH": 64, "DEFAULT_VALUE": "64'ha5a55a5af0f00f0f"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        },
+        {
+            "name": "inputs_8_width_128",
+            "parameters": {"NUM_INPUTS": 8, "DATA_WIDTH": 128, "DEFAULT_VALUE": "128'ha5a55a5af0f00f0f5a5aa5a50f0ff0f0"},
+            "flows": ["verible_lint", "verible_format", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim", "static_intent"],
+            "tops": {"design": "mux", "testbench": "mux_tb", "formal": "mux_formal"}
+        }
+    ]
+}

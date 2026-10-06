@@ -1,0 +1,7 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {"name": "l2h_scalar", "parameters": {"WIDTH": 1, "DIRECTION": 0}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "level_shifter", "testbench": "level_shifter_checker", "formal": "level_shifter_formal_checker"}},
+        {"name": "h2l_vector", "parameters": {"WIDTH": 64, "DIRECTION": 1}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "level_shifter", "testbench": "level_shifter_checker", "formal": "level_shifter_formal_checker"}}
+    ]
+}

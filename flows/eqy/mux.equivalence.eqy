@@ -1,0 +1,14 @@
+[gold]
+read_verilog -sv rtl/mux.sv
+prep -top mux
+
+[gate]
+read_verilog work/mux/yosys_synthesis/mux_netlist.v
+prep -top mux
+
+[collect mux]
+group o_*
+
+[strategy sat]
+use sat
+depth 1

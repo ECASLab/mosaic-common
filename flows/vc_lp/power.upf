@@ -1,13 +1,15 @@
-set_design_top mosaic_module
+# VC LP is disabled for this technology-independent primitive. This single-domain
+# baseline documents that power switching, isolation, and retention are external.
+set_design_top dff
 
-create_power_domain PD_MOSAIC_MODULE -include_scope
-create_supply_port VDD -domain PD_MOSAIC_MODULE
-create_supply_port VSS -domain PD_MOSAIC_MODULE
-create_supply_net VDD -domain PD_MOSAIC_MODULE
-create_supply_net VSS -domain PD_MOSAIC_MODULE
+create_power_domain PD_DFF -include_scope
+create_supply_port VDD -domain PD_DFF
+create_supply_port VSS -domain PD_DFF
+create_supply_net VDD -domain PD_DFF
+create_supply_net VSS -domain PD_DFF
 connect_supply_net VDD -ports VDD
 connect_supply_net VSS -ports VSS
-set_domain_supply_net PD_MOSAIC_MODULE -primary_power_net VDD -primary_ground_net VSS
+set_domain_supply_net PD_DFF -primary_power_net VDD -primary_ground_net VSS
 
-# Add isolation, retention, level shifters, power switches and power states when
-# the module implements more than one power state or voltage domain.
+# Add isolation, retention, level shifters, power switches, and power states only
+# in an integrating design that implements multiple power or voltage domains.

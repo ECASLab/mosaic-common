@@ -1,0 +1,139 @@
+{
+    "schema": "mosaic-qualification-campaigns-v1",
+    "campaigns": {
+        "negative": {
+            "inputs": ["rtl/write_gate.sv", "verif/mutations/write_gate_inverted_suppress_mutant.sv", "verif/tb/write_gate_test_case.sv", "verif/tb/write_gate_invalid_width_tb.sv"],
+            "cases": [
+                {
+                    "id": "nominal_unit_regression",
+                    "evidence": "nominal_unit_regression",
+                    "role": "positive_control",
+                    "kind": "simulation_control",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DWRITE_GATE_DISABLE_COVERAGE", "-s", "write_gate_test_case", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/tb/write_gate_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success"}
+                    ]
+                },
+                {
+                    "id": "inverted_suppression_mutation",
+                    "evidence": "inverted_suppression_mutation",
+                    "role": "negative",
+                    "kind": "simulation_mutation",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DWRITE_GATE_DISABLE_COVERAGE", "-s", "write_gate_test_case", "-o", "{case_work_dir}/simulation.vvp", "verif/mutations/write_gate_inverted_suppress_mutant.sv", "verif/tb/write_gate_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "permitted-write mismatch", "failure_class": "assertion"}
+                    ]
+                },
+                {
+                    "id": "invalid_width_elaboration",
+                    "evidence": "invalid_width_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "write_gate_invalid_width_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/tb/write_gate_invalid_width_tb.sv"], "expected": "failure", "diagnostic": "write_gate_width_must_be_greater_than_zero", "failure_class": "elaboration"}
+                    ]
+                }
+            ]
+        },
+        "four_state": {
+            "simulator": "iverilog",
+            "inputs": ["rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"],
+            "cases": [
+                {
+                    "id": "disabled_unknown_write_enable_x",
+                    "evidence": "disabled_unknown_write_enable_x",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_write_enable", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_DISABLE_UNKNOWN_MONITOR", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "WRITE_GATE_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "unknown_write_enable_x",
+                    "evidence": "unknown_write_enable_x",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_unknown_write_enable_x",
+                    "injections": [{"control": "i_write_enable", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "write_gate write-enable control is unknown", "failure_class": "unknown_control"}
+                    ]
+                },
+                {
+                    "id": "disabled_high_impedance_write_enable_z",
+                    "evidence": "disabled_high_impedance_write_enable_z",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_write_enable", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_DISABLE_UNKNOWN_MONITOR", "-DWRITE_GATE_INJECT_Z", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "WRITE_GATE_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "high_impedance_write_enable_z",
+                    "evidence": "high_impedance_write_enable_z",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_high_impedance_write_enable_z",
+                    "injections": [{"control": "i_write_enable", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_INJECT_Z", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "write_gate write-enable control is unknown", "failure_class": "unknown_control"}
+                    ]
+                },
+                {
+                    "id": "disabled_unknown_suppress_x",
+                    "evidence": "disabled_unknown_suppress_x",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_suppress", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_DISABLE_UNKNOWN_MONITOR", "-DWRITE_GATE_INJECT_SUPPRESS", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "WRITE_GATE_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "unknown_suppress_x",
+                    "evidence": "unknown_suppress_x",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_unknown_suppress_x",
+                    "injections": [{"control": "i_suppress", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_INJECT_SUPPRESS", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "write_gate suppression control is unknown for a request", "failure_class": "unknown_control"}
+                    ]
+                },
+                {
+                    "id": "disabled_high_impedance_suppress_z",
+                    "evidence": "disabled_high_impedance_suppress_z",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_suppress", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_DISABLE_UNKNOWN_MONITOR", "-DWRITE_GATE_INJECT_SUPPRESS", "-DWRITE_GATE_INJECT_Z", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "WRITE_GATE_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "unknown_suppress_z",
+                    "evidence": "unknown_suppress_z",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_high_impedance_suppress_z",
+                    "injections": [{"control": "i_suppress", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "write_gate_four_state_tb", "-DWRITE_GATE_INJECT_SUPPRESS", "-DWRITE_GATE_INJECT_Z", "-o", "{case_work_dir}/simulation.vvp", "rtl/write_gate.sv", "verif/assertions/write_gate_sva.sv", "verif/tb/write_gate_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "write_gate suppression control is unknown for a request", "failure_class": "unknown_control"}
+                    ]
+                }
+            ]
+        }
+    }
+}

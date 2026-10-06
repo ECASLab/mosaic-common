@@ -1,0 +1,7 @@
+{
+    "schema": "mosaic-parameter-profiles-v1",
+    "include": [
+        {"name": "single_lane", "parameters": {"LANES": 1}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "lane_mask", "testbench": "lane_mask_checker", "formal": "lane_mask_formal_checker"}},
+        {"name": "vector_lanes", "parameters": {"LANES": 16}, "flows": ["verible_lint", "slang_elaboration", "verilator_lint", "yosys_synthesis", "symbiyosys_formal", "eqy_equivalence", "verilator_sim"], "tops": {"design": "lane_mask", "testbench": "lane_mask_checker", "formal": "lane_mask_formal_checker"}}
+    ]
+}

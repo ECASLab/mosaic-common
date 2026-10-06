@@ -1,0 +1,123 @@
+{
+    "schema": "mosaic-qualification-campaigns-v1",
+    "campaigns": {
+        "negative": {
+            "inputs": [
+                "rtl/operand_isolation.sv",
+                "verif/mutations/operand_isolation_inverted_control_mutant.sv",
+                "verif/tb/operand_isolation_test_case.sv",
+                "verif/tb/operand_isolation_invalid_width_tb.sv",
+                "verif/tb/operand_isolation_invalid_clamp_tb.sv"
+            ],
+            "cases": [
+                {
+                    "id": "nominal_unit_regression",
+                    "evidence": "nominal_unit_regression",
+                    "role": "positive_control",
+                    "kind": "simulation_control",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DOPERAND_ISOLATION_DISABLE_COVERAGE", "-s", "operand_isolation_test_case", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/tb/operand_isolation_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success"}
+                    ]
+                },
+                {
+                    "id": "inverted_control_mutation",
+                    "evidence": "inverted_control_mutation",
+                    "role": "negative",
+                    "kind": "simulation_mutation",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DOPERAND_ISOLATION_DISABLE_COVERAGE", "-s", "operand_isolation_test_case", "-o", "{case_work_dir}/simulation.vvp", "verif/mutations/operand_isolation_inverted_control_mutant.sv", "verif/tb/operand_isolation_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "actual=", "failure_class": "assertion"}
+                    ]
+                },
+                {
+                    "id": "invalid_width_elaboration",
+                    "evidence": "invalid_width_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "operand_isolation_invalid_width_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/tb/operand_isolation_invalid_width_tb.sv"], "expected": "failure", "diagnostic": "operand_isolation_width_must_be_greater_than_zero", "failure_class": "elaboration"}
+                    ]
+                },
+                {
+                    "id": "invalid_clamp_x_elaboration",
+                    "evidence": "invalid_clamp_x_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "operand_isolation_invalid_clamp_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/tb/operand_isolation_invalid_clamp_tb.sv"], "expected": "failure", "diagnostic": "operand_isolation_clamp_value_must_be_known", "failure_class": "elaboration"}
+                    ]
+                },
+                {
+                    "id": "invalid_clamp_z_elaboration",
+                    "evidence": "invalid_clamp_z_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DOPERAND_ISOLATION_INVALID_CLAMP_Z", "-s", "operand_isolation_invalid_clamp_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/tb/operand_isolation_invalid_clamp_tb.sv"], "expected": "failure", "diagnostic": "operand_isolation_clamp_value_must_be_known", "failure_class": "elaboration"}
+                    ]
+                }
+            ]
+        },
+        "four_state": {
+            "simulator": "iverilog",
+            "inputs": [
+                "rtl/operand_isolation.sv",
+                "verif/assertions/operand_isolation_sva.sv",
+                "verif/tb/operand_isolation_four_state_tb.sv"
+            ],
+            "cases": [
+                {
+                    "id": "disabled_unknown_control_x",
+                    "evidence": "disabled_unknown_control_x",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_isolate", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DOPERAND_ISOLATION_DISABLE_UNKNOWN_MONITOR", "-s", "operand_isolation_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/assertions/operand_isolation_sva.sv", "verif/tb/operand_isolation_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "OPERAND_ISOLATION_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "unknown_control_x",
+                    "evidence": "unknown_control_x",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_unknown_control_x",
+                    "injections": [{"control": "i_isolate", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "operand_isolation_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/assertions/operand_isolation_sva.sv", "verif/tb/operand_isolation_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "operand_isolation isolation control is unknown", "failure_class": "unknown_control"}
+                    ]
+                },
+                {
+                    "id": "disabled_high_impedance_control_z",
+                    "evidence": "disabled_high_impedance_control_z",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_isolate", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DOPERAND_ISOLATION_DISABLE_UNKNOWN_MONITOR", "-DOPERAND_ISOLATION_INJECT_Z", "-s", "operand_isolation_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/assertions/operand_isolation_sva.sv", "verif/tb/operand_isolation_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "OPERAND_ISOLATION_UNKNOWN_CONTROL_STIMULUS_REACHED"}
+                    ]
+                },
+                {
+                    "id": "high_impedance_control_z",
+                    "evidence": "high_impedance_control_z",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_high_impedance_control_z",
+                    "injections": [{"control": "i_isolate", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DOPERAND_ISOLATION_INJECT_Z", "-s", "operand_isolation_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/operand_isolation.sv", "verif/assertions/operand_isolation_sva.sv", "verif/tb/operand_isolation_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "operand_isolation isolation control is unknown", "failure_class": "unknown_control"}
+                    ]
+                }
+            ]
+        }
+    }
+}

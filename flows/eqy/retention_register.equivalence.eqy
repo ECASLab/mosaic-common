@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/retention_register.sv
+prep -top retention_register
+
+[gate]
+read_verilog work/retention_register/yosys_synthesis/retention_register_netlist.v
+prep -top retention_register
+
+[strategy sat]
+use sat
+depth 4

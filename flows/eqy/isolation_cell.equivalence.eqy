@@ -1,0 +1,11 @@
+[gold]
+read_verilog -sv rtl/isolation_cell.sv
+prep -top isolation_cell
+
+[gate]
+read_verilog work/isolation_cell/yosys_synthesis/isolation_cell_netlist.v
+prep -top isolation_cell
+
+[strategy sat]
+use sat
+depth 1

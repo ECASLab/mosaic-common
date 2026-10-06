@@ -1,0 +1,3 @@
+verif/coverage/decoder_coverage.sv
+verif/coverage/decoder_transition_coverage.sv
+verif/coverage/decoder_coverage_bind.sv

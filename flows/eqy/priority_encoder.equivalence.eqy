@@ -1,0 +1,15 @@
+[gold]
+read_verilog -sv rtl/priority_encoder.sv
+prep -top priority_encoder
+
+[gate]
+read_verilog work/priority_encoder/yosys_synthesis/priority_encoder_netlist.v
+prep -top priority_encoder
+
+[collect priority_encoder]
+# Keep coupled binary, one-hot, valid, and contention outputs together.
+group o_*
+
+[strategy sat]
+use sat
+depth 1

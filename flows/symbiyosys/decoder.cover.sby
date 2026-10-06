@@ -1,0 +1,16 @@
+[options]
+mode cover
+depth 2
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -D MOSAIC_FORMAL -D MOSAIC_YOSYS_FORMAL -D FORMAL_COVERAGE -sv decoder.sv decoder_coverage.sv decoder_coverage_bind.sv decoder_formal.sv
+prep -top decoder_formal
+
+[files]
+rtl/decoder.sv
+verif/coverage/decoder_coverage.sv
+verif/coverage/decoder_coverage_bind.sv
+verif/formal/decoder_formal.sv

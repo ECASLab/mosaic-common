@@ -1,0 +1,14 @@
+[options]
+mode prove
+depth 16
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -sv reset_synchronizer.sv reset_synchronizer_formal.sv
+prep -top reset_synchronizer_formal
+
+[files]
+rtl/reset_synchronizer.sv
+verif/formal/reset_synchronizer_formal.sv

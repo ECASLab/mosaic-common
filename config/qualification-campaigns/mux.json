@@ -1,0 +1,135 @@
+{
+    "schema": "mosaic-qualification-campaigns-v1",
+    "campaigns": {
+        "negative": {
+            "inputs": [
+                "rtl/mux.sv",
+                "verif/mutations/mux_invalid_valid_mutant.sv",
+                "verif/tb/mux_test_case.sv",
+                "verif/tb/mux_invalid_num_inputs_tb.sv",
+                "verif/tb/mux_invalid_data_width_tb.sv",
+                "verif/tb/mux_invalid_sel_width_tb.sv",
+                "verif/tb/mux_invalid_default_value_tb.sv"
+            ],
+            "cases": [
+                {
+                    "id": "nominal_unit_regression",
+                    "evidence": "nominal_unit_regression",
+                    "role": "positive_control",
+                    "kind": "simulation_control",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DMUX_DISABLE_COVERAGE", "-s", "mux_test_case", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/tb/mux_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success"}
+                    ]
+                },
+                {
+                    "id": "invalid_valid_mutation",
+                    "evidence": "invalid_valid_mutation",
+                    "role": "negative",
+                    "kind": "simulation_mutation",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-DMUX_DISABLE_COVERAGE", "-s", "mux_test_case", "-o", "{case_work_dir}/simulation.vvp", "verif/mutations/mux_invalid_valid_mutant.sv", "verif/tb/mux_test_case.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "actual=", "failure_class": "assertion"}
+                    ]
+                },
+                {
+                    "id": "invalid_num_inputs_elaboration",
+                    "evidence": "invalid_num_inputs_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "mux_invalid_num_inputs_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/tb/mux_invalid_num_inputs_tb.sv"], "expected": "failure", "diagnostic": "mux_num_inputs_must_be_greater_than_zero", "failure_class": "elaboration"}
+                    ]
+                },
+                {
+                    "id": "invalid_data_width_elaboration",
+                    "evidence": "invalid_data_width_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "mux_invalid_data_width_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/tb/mux_invalid_data_width_tb.sv"], "expected": "failure", "diagnostic": "mux_data_width_must_be_greater_than_zero", "failure_class": "elaboration"}
+                    ]
+                },
+                {
+                    "id": "invalid_sel_width_elaboration",
+                    "evidence": "invalid_sel_width_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "mux_invalid_sel_width_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/tb/mux_invalid_sel_width_tb.sv"], "expected": "failure", "diagnostic": "mux_sel_width_must_match_num_inputs", "failure_class": "elaboration"}
+                    ]
+                },
+                {
+                    "id": "invalid_default_value_elaboration",
+                    "evidence": "invalid_default_value_elaboration",
+                    "role": "negative",
+                    "kind": "invalid_parameter",
+                    "positive_control": "nominal_unit_regression",
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-s", "mux_invalid_default_value_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/tb/mux_invalid_default_value_tb.sv"], "expected": "failure", "diagnostic": "mux_default_value_must_be_known", "failure_class": "elaboration"}
+                    ]
+                }
+            ]
+        },
+        "four_state": {
+            "simulator": "iverilog",
+            "inputs": [
+                "rtl/mux.sv",
+                "verif/assertions/mux_sva.sv",
+                "verif/tb/mux_four_state_tb.sv"
+            ],
+            "cases": [
+                {
+                    "id": "disabled_unknown_select_x",
+                    "evidence": "disabled_unknown_select_x",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_select", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DMUX_DISABLE_UNKNOWN_MONITOR", "-s", "mux_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/assertions/mux_sva.sv", "verif/tb/mux_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "MUX_UNKNOWN_SELECTION_FAIL_CLOSED_CONFIRMED"}
+                    ]
+                },
+                {
+                    "id": "unknown_select_x",
+                    "evidence": "unknown_select_x",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_unknown_select_x",
+                    "injections": [{"control": "i_select", "values": ["X"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-s", "mux_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/assertions/mux_sva.sv", "verif/tb/mux_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "mux selection contains an unknown value", "failure_class": "unknown_control"}
+                    ]
+                },
+                {
+                    "id": "disabled_high_impedance_select_z",
+                    "evidence": "disabled_high_impedance_select_z",
+                    "role": "disabled_monitor_control",
+                    "kind": "stimulus_control",
+                    "injections": [{"control": "i_select", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DMUX_DISABLE_UNKNOWN_MONITOR", "-DMUX_INJECT_Z", "-s", "mux_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/assertions/mux_sva.sv", "verif/tb/mux_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "success", "diagnostic": "MUX_UNKNOWN_SELECTION_FAIL_CLOSED_CONFIRMED"}
+                    ]
+                },
+                {
+                    "id": "high_impedance_select_z",
+                    "evidence": "high_impedance_select_z",
+                    "role": "unknown_detection",
+                    "kind": "control_unknown",
+                    "monitor_control": "disabled_high_impedance_select_z",
+                    "injections": [{"control": "i_select", "values": ["Z"]}],
+                    "phases": [
+                        {"name": "compile", "command": ["{iverilog}", "-g2012", "-I", "verif/properties", "-DMUX_INJECT_Z", "-s", "mux_four_state_tb", "-o", "{case_work_dir}/simulation.vvp", "rtl/mux.sv", "verif/assertions/mux_sva.sv", "verif/tb/mux_four_state_tb.sv"], "expected": "success"},
+                        {"name": "run", "command": ["{vvp}", "{case_work_dir}/simulation.vvp"], "expected": "failure", "diagnostic": "mux selection contains an unknown value", "failure_class": "unknown_control"}
+                    ]
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,12 @@
+[gold]
+read_verilog -sv rtl/clock_gate.sv
+prep -top clock_gate
+
+[gate]
+read_verilog verif/formal/fault_injection/clock_gate_bad_netlist.v
+prep -top clock_gate
+
+[strategy sby]
+use sby
+depth 8
+engine smtbmc bitwuzla

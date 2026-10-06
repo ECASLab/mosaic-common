@@ -1,0 +1,17 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -D MOSAIC_FORMAL -D MOSAIC_YOSYS_FORMAL -D FORMAL_ASSERTIONS -sv decoder.sv decoder_sva.sv decoder_bind.sv decoder_formal.sv
+prep -top decoder_formal
+
+[files]
+rtl/decoder.sv
+verif/properties/decoder_predicates.svh
+verif/assertions/decoder_sva.sv
+verif/assertions/decoder_bind.sv
+verif/formal/decoder_formal.sv

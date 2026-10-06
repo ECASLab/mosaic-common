@@ -1,0 +1,17 @@
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal -D MOSAIC_FORMAL -D MOSAIC_YOSYS_FORMAL -D FORMAL_ASSERTIONS -sv mux.sv mux_sva.sv mux_bind.sv mux_formal.sv
+prep -top mux_formal
+
+[files]
+rtl/mux.sv
+verif/properties/mux_predicates.svh
+verif/assertions/mux_sva.sv
+verif/assertions/mux_bind.sv
+verif/formal/mux_formal.sv
